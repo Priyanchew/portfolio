@@ -2,17 +2,7 @@ import BlurFade from "@/components/magicui/blur-fade";
 import { allPosts } from "content-collections";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ChevronRight, FileText } from "lucide-react";
-
-// Static docs (HTML) hosted under /blogs/docs/ for easy link-sharing.
-// Add new entries here as you drop more files into public/blogs/docs/.
-const DOCS = [
-  {
-    title: "OSVI — Chat Agent v1",
-    href: "/blogs/docs/osvi-chat-agent-v1.html",
-    description: "Internship doc — chat agent prototype walkthrough.",
-  },
-];
+import { ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Blogs",
@@ -51,41 +41,6 @@ export default function BlogsPage() {
           My thoughts on AI agents, developer tooling, and building.
         </p>
       </BlurFade>
-
-      {DOCS.length > 0 && (
-        <BlurFade delay={BLUR_FADE_DELAY * 1.5}>
-          <div className="mb-10 border border-border rounded-xl p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <FileText className="size-4 text-muted-foreground" />
-              <h2 className="text-sm font-semibold tracking-tight">Docs</h2>
-              <span className="text-xs text-muted-foreground">
-                shareable links
-              </span>
-            </div>
-            <div className="flex flex-col gap-2">
-              {DOCS.map((doc) => (
-                <a
-                  key={doc.href}
-                  href={doc.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-start gap-2 text-sm hover:bg-accent/40 -mx-2 px-2 py-1.5 rounded-md transition-colors"
-                >
-                  <ChevronRight className="size-4 mt-0.5 text-muted-foreground shrink-0" />
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <span className="font-medium group-hover:text-foreground transition-colors">
-                      {doc.title}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {doc.description}
-                    </span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </BlurFade>
-      )}
 
       {sortedPosts.length > 0 ? (
         <BlurFade delay={BLUR_FADE_DELAY * 2}>

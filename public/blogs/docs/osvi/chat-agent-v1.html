@@ -3,6 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<script>
+  // Auth gate: redirect to /osvi/ if not authenticated. The actual secret
+  // check + localStorage write happens in the /osvi/ page.
+  (function () {
+    try {
+      if (localStorage.getItem("osvi_auth") === "authenticated_v1") return;
+    } catch (e) { /* localStorage might be blocked; fall through to redirect */ }
+    var from = window.location.pathname + window.location.search;
+    window.location.replace("/osvi/?from=" + encodeURIComponent(from));
+  })();
+</script>
 <title>OSVI Chat Agent v1 — Spec, Schema &amp; Implementation Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
