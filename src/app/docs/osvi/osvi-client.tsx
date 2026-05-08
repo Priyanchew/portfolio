@@ -1,7 +1,8 @@
 "use client";
 
 import BlurFade from "@/components/magicui/blur-fade";
-import { ChevronRight, FileText, Lock, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, Lock, LogOut } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // SHA-256 of the access key. The plaintext key is NOT shipped in the bundle.
@@ -14,11 +15,12 @@ const SECRET_HASH =
 const AUTH_KEY = "osvi_auth";
 const AUTH_VALUE = "authenticated_v1";
 
-const DOCS = [
+const OSVI_DOCS = [
   {
-    title: "OSVI — Chat Agent v1",
-    href: "/blogs/docs/osvi/chat-agent-v1.html",
-    description: "Spec, schema & implementation plan for the chat agent prototype.",
+    title: "Chat Agent v1",
+    href: "/docs/osvi/chat-agent-v1.html",
+    description:
+      "Spec, schema & implementation plan for the chat agent prototype.",
   },
 ];
 
@@ -52,12 +54,12 @@ export default function OsviClient() {
     setAuthState("locked");
   }, []);
 
-  // After unlock, if we were redirected here from a doc URL, send the user back.
+  // After unlock, if redirected here from a doc URL, send the user back.
   useEffect(() => {
     if (authState !== "unlocked") return;
     const params = new URLSearchParams(window.location.search);
     const from = params.get("from");
-    if (from && from.startsWith("/blogs/docs/osvi/")) {
+    if (from && from.startsWith("/docs/osvi/")) {
       window.location.replace(from);
     }
   }, [authState]);
@@ -107,9 +109,7 @@ export default function OsviClient() {
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="flex items-center gap-2 mb-2">
               <Lock className="size-5 text-muted-foreground" />
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Private
-              </h1>
+              <h1 className="text-2xl font-semibold tracking-tight">Private</h1>
             </div>
             <p className="text-sm text-muted-foreground mb-8 text-center max-w-md">
               This area is restricted. Enter the access key to continue.
@@ -127,9 +127,7 @@ export default function OsviClient() {
                 autoComplete="off"
                 className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
-              {error && (
-                <p className="text-xs text-destructive">{error}</p>
-              )}
+              {error && <p className="text-xs text-destructive">{error}</p>}
               <button
                 type="submit"
                 disabled={submitting || !input.trim()}
@@ -147,11 +145,19 @@ export default function OsviClient() {
   return (
     <section id="osvi">
       <BlurFade delay={BLUR_FADE_DELAY}>
+        <Link
+          href="/docs"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mb-4"
+        >
+          <ChevronLeft className="size-3.5" />
+          <span>Back to docs</span>
+        </Link>
         <div className="flex items-start justify-between mb-2 gap-4">
           <h1 className="text-2xl font-semibold tracking-tight">
             OSVI{" "}
             <span className="ml-1 bg-card border border-border rounded-md px-2 py-1 text-muted-foreground text-sm">
-              {DOCS.length} docs
+              {OSVI_DOCS.length}{" "}
+              {OSVI_DOCS.length === 1 ? "doc" : "docs"}
             </span>
           </h1>
           <button
@@ -170,7 +176,7 @@ export default function OsviClient() {
 
       <BlurFade delay={BLUR_FADE_DELAY * 2}>
         <div className="flex flex-col gap-2">
-          {DOCS.map((doc) => (
+          {OSVI_DOCS.map((doc) => (
             <a
               key={doc.href}
               href={doc.href}

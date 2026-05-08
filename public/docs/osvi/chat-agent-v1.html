@@ -12,7 +12,7 @@
       if (localStorage.getItem("osvi_auth") === "authenticated_v1") return;
     } catch (e) { /* localStorage might be blocked; fall through to redirect */ }
     var from = window.location.pathname + window.location.search;
-    window.location.replace("/osvi/?from=" + encodeURIComponent(from));
+    window.location.replace("/docs/osvi/?from=" + encodeURIComponent(from));
   })();
 </script>
 <title>OSVI Chat Agent v1 — Spec, Schema &amp; Implementation Plan</title>

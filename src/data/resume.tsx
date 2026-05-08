@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Icons } from "@/components/icons";
-import { HomeIcon, NotebookIcon } from "lucide-react";
+import { HomeIcon, NotebookIcon, FileTextIcon } from "lucide-react";
 import { ReactLight } from "@/components/ui/svgs/reactLight";
 import { NextjsIconDark } from "@/components/ui/svgs/nextjsIconDark";
 import { Typescript } from "@/components/ui/svgs/typescript";
@@ -40,6 +40,7 @@ export const DATA = {
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
     { href: "/blogs", icon: NotebookIcon, label: "Blogs" },
+    { href: "/docs", icon: FileTextIcon, label: "Docs" },
   ],
   contact: {
     email: "priyanshu6beta@gmail.com",
