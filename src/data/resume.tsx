@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Icons } from "@/components/icons";
 import { HomeIcon, NotebookIcon } from "lucide-react";
 import { ReactLight } from "@/components/ui/svgs/reactLight";
@@ -135,7 +136,31 @@ export const DATA = {
     },
   ],
   // TODO: add projects when ready
-  projects: [],
+  projects: [] as ReadonlyArray<{
+    title: string;
+    href?: string;
+    description: string;
+    dates: string;
+    technologies: readonly string[];
+    image?: string;
+    video?: string;
+    links?: readonly {
+      icon: ReactNode;
+      type: string;
+      href: string;
+    }[];
+  }>,
   // TODO: keep section structure; fill hackathons later if any
-  hackathons: [],
+  hackathons: [] as ReadonlyArray<{
+    title: string;
+    dates: string;
+    location?: string;
+    description?: string;
+    image?: string;
+    links?: readonly {
+      icon: ReactNode;
+      title: string;
+      href: string;
+    }[];
+  }>,
 } as const;
