@@ -12,7 +12,7 @@ export const DATA = {
   name: "Priyanshu Choudhary",
   initials: "PC",
   // TODO: replace with your custom domain once DNS is live
-  url: "https://priyanshu.dev",
+  url: "https://priyanchew.dev",
   location: "Bengaluru, India",
   locationLink: "https://www.google.com/maps/place/Bengaluru",
   description:

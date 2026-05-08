@@ -1561,7 +1561,7 @@
   <div class="section-head">
     <div class="kicker">06 · Cross-check · Issues found while merging the docs</div>
     <div class="row row--asym">
-      <h2>Six conflicts found.<br>Resolve before kickoff.</h2>
+      <h2>Seven conflicts found.<br>Resolve before kickoff.</h2>
       <p class="lead">
         Verified against the actual codebase and a careful re-read of the plan. Each item
         has a clear remediation; nothing here is theoretical. The plan should be amended
@@ -1704,10 +1704,99 @@ meta = Column(<span class="s">"metadata"</span>, JSONB, nullable=<span class="k"
     <p style="margin-top:8px">The controller can then assign the enumerator directly: <code class="inline">self.response_body = enumerator</code>. Rails will iterate it and flush each chunk as it arrives.</p>
   </div>
 
+  <div class="card" style="border-left:4px solid var(--amber-deep); margin-top:18px">
+    <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px">
+      <span class="pill pill--amber">Watch · #7</span>
+      <span class="pill">tool_factory.py · Task 7.2</span>
+      <span class="pill">request_human_help · Task 7.1</span>
+      <span class="pill">Ruby admin · Task 1.6</span>
+    </div>
+    <h3 style="margin-top:8px">Voice's <code class="inline">human_transfer_tool</code> isn't reusable — but the existing Slack notifier <em>is</em></h3>
+    <p>
+      The chat ToolFactory deliberately excludes voice-only tool types
+      (<code class="inline">end_call</code>, <code class="inline">detect_voice_mail</code>,
+      <code class="inline">language_switch</code>, <code class="inline">warm_transfer</code>,
+      <code class="inline">transfer_call_to_human_agent</code>). Voice's
+      <code class="inline">human_transfer_tool</code> is SIP/LiveKit-specific (warm transfer
+      via SIP REFER) and has no analogue in text chat. The chat handoff path is the POC's
+      <code class="inline">request_human_help</code> — an asynchronous flag, not a
+      synchronous transfer.
+    </p>
+    <p style="margin-top:8px">
+      <strong>Gap A — silent drop.</strong> <code class="inline">_VOICE_ONLY</code> entries in
+      <code class="inline">build_tools_for_agent()</code> use a <code class="inline">continue</code>
+      with no log. If an admin pastes a voice agent's <code class="inline">agent_config.tools</code>
+      into a chat agent (or copy-pastes a tool entry by mistake), the tool silently disappears at
+      runtime and the AI behaves as if it was never configured. No error in Ruby admin, no error
+      at boot, no log line.
+    </p>
+
+    <div class="callout callout--info" style="margin-top:14px">
+      <span class="label">Existing infra worth wiring in</span>
+      <p style="margin:0">
+        <code class="inline">services/notifications/</code> already ships a
+        <code class="inline">SlackNotificationChannel</code> (incoming webhook) and a
+        <code class="inline">NotificationService</code> singleton with a Strategy-pattern
+        fan-out. Today it's only fired from <code class="inline">post_call_service.py:281</code>
+        as <code class="inline">notify_call_completed(...)</code> after voice calls. Nothing
+        chat-side touches it. Voice's <code class="inline">human_transfer_tool</code> doesn't
+        fire it either — it just does the SIP transfer.
+      </p>
+    </div>
+
+    <p style="margin-top:14px">
+      <strong>Gap B — chat help-request goes nowhere visible.</strong> v1's
+      <code class="inline">request_human_help</code> only flips
+      <code class="inline">help_requested = TRUE</code> and writes a
+      <code class="inline">help_requested</code> event row. Operators have to <em>poll</em>
+      the dashboard to find sessions that need help. The existing Slack channel is right
+      there and trivial to extend.
+    </p>
+
+    <p style="margin-top:8px; color:var(--ink)"><strong>Pick one (or both):</strong></p>
+    <ul class="dashes" style="font-size:14px">
+      <li><strong>(A) Just keep the silent flag, plus admin validation.</strong>
+        In Ruby's <code class="inline">ChatAgentsController#create_params</code> + a model-level
+        validator, reject any <code class="inline">agent_config.tools[*].tool_type</code> that's
+        in the voice-only set. Operators rely on the dashboard to find help-requested sessions.
+        Cheapest. No new code paths beyond Ruby validation.</li>
+      <li><strong>(B) Wire <code class="inline">request_human_help</code> into the existing Slack notifier.</strong>
+        After the SQL writes (set flag + insert event), call
+        <code class="inline">await get_notification_service().notify_help_requested(...)</code>.
+        Operators get a Slack ping with the session ID, agent name, customer hint, the AI's
+        stated <code class="inline">reason</code>, and a deep link to the dashboard. Concrete steps:
+        <ol style="margin-top:6px; font-size:13.5px">
+          <li>Add <code class="inline">send_help_requested_notification</code> to <code class="inline">NotificationChannel</code> ABC.</li>
+          <li>Add <code class="inline">HelpRequestedPayload</code> dataclass — session_id, agent_uuid, agent_display_name, account_name, customer_id, reason, dashboard_url.</li>
+          <li>Implement <code class="inline">SlackNotificationChannel.send_help_requested_notification</code> with chat-flavored message text.</li>
+          <li>Add <code class="inline">NotificationService.notify_help_requested(...)</code> using the same fan-out pattern <code class="inline">notify_call_completed</code> uses.</li>
+          <li>Extend <code class="inline">request_human_help</code> body with a non-fatal <code class="inline">try/except</code> wrapping the notify call (same defensive pattern voice uses at <code class="inline">post_call_service.py:287-288</code>).</li>
+        </ol>
+        Reuses every existing piece. <code class="inline">SLACK_WEBHOOK_URL</code> is already wired in <code class="inline">config/config.py</code>. No new secrets, no new infra.</li>
+      <li><strong>(C) Both.</strong> Validate at admin time (primary defense against the silent drop) AND wire the Slack ping (gives operators a real-time signal, kills dashboard polling). Recommended for v1 since both are small.</li>
+    </ul>
+    <div class="callout callout--warn" style="margin-top:10px">
+      <span class="label">Open question for the team</span>
+      <p style="margin:0">Should the Slack ping fire on <strong>every</strong> help-request, or only when no operator is currently online? The latter needs a presence model we don't have in v1. Default recommendation: fire on every help-request in v1 (simple, predictable); revisit if Slack noise becomes a problem.</p>
+    </div>
+  </div>
+
   <div class="callout callout--info" style="margin-top:24px">
     <span class="label">Resolved during merge</span>
     <p style="margin:0">
       <strong>llm_provider_template_id</strong> replaced the original <code class="inline">llm_provider_id</code> on <code class="inline">chat_agents</code>; <strong>llm_config</strong> JSONB added. The <code class="inline">config</code> JSONB no longer carries an <code class="inline">"llm"</code> sub-key. All four locations across the schema HTML and the implementation plan have been updated in the prior edit pass.
+    </p>
+  </div>
+  <div class="callout callout--info" style="margin-top:14px">
+    <span class="label">Design decision · recorded</span>
+    <p style="margin:0">
+      <strong>Voice's <code class="inline">human_transfer_tool</code> is not integrated for chat.</strong>
+      Chat uses <code class="inline">request_human_help</code> (port from
+      <code class="inline">osvi-support-hitl/backend/agent/tools.py</code>): an async flag that
+      sets <code class="inline">help_requested = TRUE</code> and writes a
+      <code class="inline">help_requested</code> event. Operator handoff happens via a separate
+      <code class="inline">/takeover</code> slash command — no synchronous transfer over a wire.
+      See Watch #7 above for the admin-UX validation needed.
     </p>
   </div>
 </section>
