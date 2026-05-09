@@ -3,9 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<!-- Listing on /docs/osvi — optional short card text (falls back to <title> / meta description). -->
-<meta name="osvi-doc-title" content="Chat Agent v1" />
-<meta name="osvi-doc-description" content="Spec, schema &amp; implementation plan for the chat agent prototype." />
 <title>OSVI Chat Agent v1 — Final Spec, Schema &amp; Implementation Plan (2026-05-09)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -620,7 +617,7 @@
 <!-- ============ TOP NAV ============ -->
 <nav class="topnav">
   <div class="topnav-inner">
-    <div class="brand"><span class="dot"></span>OSVI · Chat Agent v1 · Final (rev 2) · 2026-05-09</div>
+    <div class="brand"><span class="dot"></span>OSVI · Chat Agent v1 · Final (rev 3) · 2026-05-09</div>
     <ul class="nav-items">
       <li><a href="#brief" class="active">Brief</a></li>
       <li><a href="#architecture">Architecture</a></li>
@@ -643,7 +640,7 @@
 <section id="brief" class="container hero anchor-pad">
   <div class="row row--asym">
     <div>
-      <span class="pill">Authoritative · Final (rev 2) · 2026-05-09</span>
+      <span class="pill">Authoritative · Final (rev 3) · 2026-05-09</span>
       <h1>Chat Agent v1 — Final Spec, Schema &amp; Implementation Plan</h1>
       <p class="lead">
         WhatsApp-first, gateway-driven AI chat with full operator HITL. Rails
@@ -660,7 +657,7 @@
       <h4 style="font-family:'Instrument Serif',serif; font-size:28px; margin-bottom:14px">Executive readout</h4>
       <p style="font-size:15px; color:var(--ink-2); margin:0 0 4px">
         Eight new tables (4 application mirror + 4 LangGraph checkpoint, all Rails-owned).
-        <strong>39 locked decisions, 10 open items.</strong> Fourteen sequential phases
+        <strong>41 locked decisions, 10 open items.</strong> Fourteen sequential phases
         with a vertical-slice milestone at Phase 10. Five HITL operator commands
         (<code class="inline">whisper</code>, <code class="inline">tell</code>,
         <code class="inline">takeover</code>, <code class="inline">end</code>,
@@ -668,10 +665,14 @@
         through the structured <code class="inline">POST /sessions/:id/support</code>
         write rail (D37). <code class="inline">/observe</code> and <code class="inline">/leave</code>
         are removed entirely (D39); <code class="inline">/tag @user</code> remains deferred to v1.1.
+        <strong>Our SPA ships a chat-agent prompt-testing playground (D40)</strong> mirroring
+        the voice-agent playground UI; the end-customer's production operator UI is owned by
+        their own support frontend. <strong>Cache busts are organic via cfg_version-keyed
+        reads (D41)</strong> — no invalidate API.
       </p>
       <div class="stat-grid">
         <div class="stat"><div class="num">14</div><div class="lbl">Phases</div></div>
-        <div class="stat"><div class="num">39</div><div class="lbl">Locked decisions</div></div>
+        <div class="stat"><div class="num">41</div><div class="lbl">Locked decisions</div></div>
         <div class="stat"><div class="num">8</div><div class="lbl">New tables</div></div>
         <div class="stat"><div class="num">10</div><div class="lbl">Open items</div></div>
       </div>
@@ -698,7 +699,7 @@
         <li>Single &amp; multi-prompt agents; parity with voice's <code class="inline">agent_config</code>.</li>
         <li>HITL via structured <code class="inline">POST /sessions/:id/support</code> (D37): <code class="inline">whisper</code>, <code class="inline">tell</code>, <code class="inline">takeover</code>, <code class="inline">end</code>, <code class="inline">close</code>, plus plain operator messages.</li>
         <li>Tools: <code class="inline">request_human_help</code>, <code class="inline">search_rag</code>, SSRF-guarded <code class="inline">custom_tool</code>, auto <code class="inline">transition_to_&lt;state&gt;</code>.</li>
-        <li>New <code class="inline">ChatLogs.tsx</code> page in <code class="inline">osvi-platform-frontend</code>, parity with Conversations (call-logs); operator console plus user-preview panel.</li>
+        <li>Our SPA ships a chat-agent playground (<code class="inline">ChatAgentPlayground.tsx</code>) mirroring the voice-agent playground (D40); end-customer production operator UI is the customer's own frontend.</li>
       </ul>
     </div>
     <div class="card">
@@ -792,9 +793,9 @@
       <!-- our SPA -->
       <g>
         <rect x="700" y="130" width="260" height="80" rx="10" fill="#c8d6c4" stroke="#2d5d3e" stroke-width="1.4"/>
-        <text x="830" y="156" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.16em" text-anchor="middle" fill="#2d5d3e">OUR SPA · TIER 1</text>
+        <text x="830" y="156" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.16em" text-anchor="middle" fill="#2d5d3e">OUR SPA · CHAT-AGENT PLAYGROUND (D40)</text>
         <text x="830" y="180" font-family="Instrument Serif, serif" font-size="18" text-anchor="middle" fill="#0d2419">osvi-platform-frontend</text>
-        <text x="830" y="200" font-family="JetBrains Mono, monospace" font-size="11" font-style="italic" text-anchor="middle" fill="#5a6f5d">ChatLogs.tsx · WS direct</text>
+        <text x="830" y="200" font-family="JetBrains Mono, monospace" font-size="11" font-style="italic" text-anchor="middle" fill="#5a6f5d">ChatAgentPlayground.tsx · User + Support panels</text>
       </g>
 
       <!-- Rails -->
@@ -814,7 +815,7 @@
 
       <!-- our SPA → Rails (Bearer JWT) -->
       <path d="M 830 210 L 830 260" stroke="#2d5d3e" stroke-width="2" fill="none" marker-end="url(#arrA)"/>
-      <text x="840" y="240" font-family="JetBrains Mono, monospace" font-size="11" fill="#2d5d3e">Bearer JWT · poll + ws-token</text>
+      <text x="840" y="240" font-family="JetBrains Mono, monospace" font-size="11" fill="#2d5d3e">Bearer JWT · ws-token + /support POST</text>
 
       <!-- customer FE → Rails -->
       <path d="M 1110 210 L 1110 260" stroke="#2d5d3e" stroke-width="2" fill="none" marker-end="url(#arrA)"/>
@@ -861,7 +862,7 @@
         <line x1="640" y1="758" x2="880" y2="758" stroke="#8a6f1f" stroke-opacity="0.25"/>
         <text x="640" y="780" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">chat_agent_config:</text>
         <text x="640" y="796" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">  &lt;UUID account_id&gt;:&lt;agent_id&gt;:&lt;cfg_version&gt;</text>
-        <text x="640" y="816" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#5a6f5d">5-min TTL · invalidated by Rails admin</text>
+        <text x="640" y="816" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#5a6f5d">5-min TTL · self-invalidating (D41)</text>
       </g>
 
       <g>
@@ -918,9 +919,9 @@
       <tr><td class="col">chat_agents</td><td class="desc">migration · admin CRUD · activate/disable</td><td class="desc">read only · Redis-cached by (account_id, agent_id, cfg_version)</td></tr>
       <tr><td class="col">llm_provider_templates</td><td class="desc">existing · admin CRUD</td><td class="desc">read only</td></tr>
       <tr><td class="col">contact_profiles</td><td class="desc">existing</td><td class="desc">read · logical join (account_id, customer_id) for memory injection</td></tr>
-      <tr><td class="col">chat_agents_sessions</td><td class="desc">migration</td><td class="desc">read &amp; write (mode, help_requested, mirror, inactivity_deadline, token_total, ended_at)</td></tr>
-      <tr><td class="col">chat_agents_messages</td><td class="desc">migration</td><td class="desc">read &amp; write · idempotency_key UNIQUE (D27)</td></tr>
-      <tr><td class="col">chat_agents_events</td><td class="desc">migration</td><td class="desc">append-only audit · errors</td></tr>
+      <tr><td class="col">chat_agent_sessions</td><td class="desc">migration</td><td class="desc">read &amp; write (mode, help_requested, mirror, inactivity_deadline, token_total, ended_at)</td></tr>
+      <tr><td class="col">chat_agent_messages</td><td class="desc">migration</td><td class="desc">read &amp; write · idempotency_key UNIQUE (D27)</td></tr>
+      <tr><td class="col">chat_agent_events</td><td class="desc">migration</td><td class="desc">append-only audit · errors</td></tr>
       <tr><td class="col">checkpoints / blobs / writes / migrations</td><td class="desc">migration · seeds checkpoint_migrations (1..5)</td><td class="desc">read &amp; write via <code class="inline">AsyncPostgresSaver</code> · <strong>never</strong> <code class="inline">.setup()</code> (D33)</td></tr>
     </tbody>
   </table>
@@ -933,7 +934,7 @@
    POST /chat-agents/inbound        POST /chat-agents/inbound          a. acquire pg adv lock
    {                                HMAC SHA256 over                       on hashtext(session_id)
      account_id (UUID),             "{ts}:{account_id}:                b. idempotency check on
-     agent_id, business_phone_id,    {operator_email}:                    chat_agents_messages
+     agent_id, business_phone_id,    {operator_email}:                    chat_agent_messages
      customer_id (= phone),          {operator_id}:                       (whatsapp_message_id)
      message_id, text, ts           {body_sha256}"                    c. fetch_chat_agent_config
    }                                Headers:                             (Redis-cached by
@@ -955,15 +956,17 @@
 <!-- ============ DECISIONS ============ -->
 <section id="decisions" class="container anchor-pad">
   <div class="section-head">
-    <div class="kicker">03 · Locked Decisions · D1–D39</div>
+    <div class="kicker">03 · Locked Decisions · D1–D41</div>
     <div class="row row--asym">
-      <h2>Thirty-nine decisions you can rely on.</h2>
+      <h2>Forty-one decisions you can rely on.</h2>
       <p class="lead">
         Numbered for reference. Reopening any one needs new information. The seven
         previously documented "conflicts" are resolved as the decisions they became
         (D5, D8, D10, D14, D19, D25, D32). D35–D39 lock the four-surface transport redesign
         (user-stream, support-stream, structured <code class="inline">/support</code> write rail,
         scoped WS tokens, no <code class="inline">/observe</code>/<code class="inline">/leave</code>).
+        D40 ships a chat-agent playground in our SPA mirroring the voice playground.
+        D41 makes the agent-config cache self-invalidating — no API needed.
       </p>
     </div>
   </div>
@@ -993,13 +996,13 @@
     <div class="decision"><span class="id">D22</span><strong>Per-turn advisory lock.</strong> Acquire → one turn → release. <code class="inline">pg_try_advisory_lock(hashtext(session_id))</code>. <code class="inline">turn_done</code> asyncio.Event awaited OUTSIDE the lock to avoid deadlock.</div>
     <div class="decision"><span class="id">D23</span><strong><code class="inline">/end</code> ≠ <code class="inline">/close</code>.</strong> <code class="inline">/end</code> releases takeover (operator-only, holder-only, resumes AI from <code class="inline">interrupt()</code>). <code class="inline">/close</code> archives session (any caller, any state, no graph touch, sets <code class="inline">ended_at</code>).</div>
     <div class="decision"><span class="id">D24</span><strong>Per-agent config in <code class="inline">chat_agents.config</code> JSONB.</strong> <code class="inline">takeover_auto_resume_seconds</code> (1800), <code class="inline">session_auto_close_hours</code> (24, hard-coded), <code class="inline">graph_turn_timeout_seconds</code> (60), <code class="inline">mirror_write_max_retries</code> (3, backoff 100/400/1600ms).</div>
-    <div class="decision"><span class="id">D25</span><strong>Multi-instance reaper, DB-backed.</strong> Column <code class="inline">chat_agents_sessions.inactivity_deadline timestamptz</code>. Reaper: <code class="inline">FOR UPDATE SKIP LOCKED LIMIT 100</code>, semaphore 10/pod. Replaces POC's per-process dict.</div>
+    <div class="decision"><span class="id">D25</span><strong>Multi-instance reaper, DB-backed.</strong> Column <code class="inline">chat_agent_sessions.inactivity_deadline timestamptz</code>. Reaper: <code class="inline">FOR UPDATE SKIP LOCKED LIMIT 100</code>, semaphore 10/pod. Replaces POC's per-process dict.</div>
     <div class="decision"><span class="id">D26</span><strong>Slack notifications: only <code class="inline">request_human_help</code> in v1.</strong> User provides <code class="inline">HELP_REQUEST_NOTIFY_URL</code>. <code class="inline">HelpRequestedNotificationChannel</code> (separate from voice's <code class="inline">SlackNotificationChannel</code>). Other events (session_ended, takeover_*, errors) deferred to v1.1.</div>
-    <div class="decision"><span class="id">D27</span><strong>Idempotency.</strong> <code class="inline">chat_agents_messages.idempotency_key</code>; UNIQUE partial index <code class="inline">(session_id, idempotency_key) WHERE direction='inbound' AND idempotency_key IS NOT NULL</code>. Replay returns cached reply without re-running the LLM. 7-day retention.</div>
+    <div class="decision"><span class="id">D27</span><strong>Idempotency.</strong> <code class="inline">chat_agent_messages.idempotency_key</code>; UNIQUE partial index <code class="inline">(session_id, idempotency_key) WHERE direction='inbound' AND idempotency_key IS NOT NULL</code>. Replay returns cached reply without re-running the LLM. 7-day retention.</div>
     <div class="decision"><span class="id">D28</span><strong>Tool-loop hard stop.</strong> <code class="inline">recursion_limit=25</code>; per-turn budget <code class="inline">max_tool_calls_per_turn</code> default 8. Cap-exceeded routes to terminal <code class="inline">tool_budget_exceeded</code> node.</div>
-    <div class="decision"><span class="id">D29</span><strong>Error handling.</strong> Graph timeout (60s) → 504; gateway retries via idempotency. Mirror failure → 200 + event row. SSRF → tool returns error string to LLM. All errors persist a <code class="inline">chat_agents_events</code> row.</div>
+    <div class="decision"><span class="id">D29</span><strong>Error handling.</strong> Graph timeout (60s) → 504; gateway retries via idempotency. Mirror failure → 200 + event row. SSRF → tool returns error string to LLM. All errors persist a <code class="inline">chat_agent_events</code> row.</div>
     <div class="decision"><span class="id">D30</span><strong>Feature flag.</strong> <code class="inline">accounts.chat_agents_enabled boolean default false</code>. Rails routes 404 if flag is off. Python doesn't check.</div>
-    <div class="decision"><span class="id">D31</span><strong>Token budgets — TODO.</strong> Not enforced in v1. Per-session counter <code class="inline">chat_agents_sessions.token_total bigint default 0</code> for visibility only. v1.1 adds caps.</div>
+    <div class="decision"><span class="id">D31</span><strong>Token budgets — TODO.</strong> Not enforced in v1. Per-session counter <code class="inline">chat_agent_sessions.token_total bigint default 0</code> for visibility only. v1.1 adds caps.</div>
     <div class="decision"><span class="id">D32</span><strong>SQLAlchemy <code class="inline">metadata</code> reserved.</strong> Use <code class="inline">meta = Column("metadata", JSONB, ...)</code>. DB column name unchanged; only the Python attribute renames.</div>
     <div class="decision"><span class="id">D33</span><strong>LangGraph pin: <code class="inline">langgraph-checkpoint-postgres==3.0.5</code> exact.</strong> CI runs <code class="inline">AsyncPostgresSaver.setup()</code> against disposable Postgres and diffs against Rails migrations; build fails on drift.</div>
     <div class="decision"><span class="id">D34</span><strong><code class="inline">Command(resume=None)</code> workaround preserved.</strong> When there is no pending interrupt, pass <code class="inline">None</code> directly (NOT <code class="inline">Command(resume=None)</code>) to <code class="inline">graph.ainvoke</code>. POC ref: <code class="inline">osvi-support-hitl/backend/services/support_service.py:730–735</code>.</div>
@@ -1008,6 +1011,8 @@
     <div class="decision"><span class="id">D37</span><strong><code class="inline">/support</code> is the sole operator write rail.</strong> Body is structured <code class="inline">{command, message, idempotency_key}</code>, NOT free-text. The slash-command parser (<code class="inline">commands/parser.py</code>, <code class="inline">commands/types.py</code>) is deleted; structured dispatch lives in <code class="inline">support_service.py</code>. Rails-fronted (<code class="inline">Admin::ChatAgentsController#support</code>). Rules: whisper/tell require <code class="inline">message</code>; takeover is a no-op (<code class="inline">200 {"state":"no_change"}</code>) when already in takeover; end requires holder + takeover state; close is any-state-any-caller; <code class="inline">command=null</code> + <code class="inline">message</code> non-null is allowed in any mode (plain operator message).</div>
     <div class="decision"><span class="id">D38</span><strong>Two WS token kinds (user, support).</strong> <code class="inline">POST /chat-agents/sessions/:id/ws-token</code> body <code class="inline">{scope: "user" | "support"}</code> mints either kind. 5-min TTL, HMAC-signed over <code class="inline">account_id:user_id:operator_email:expires_at:scope</code>. Endpoint validates <code class="inline">token.scope</code> matches the WS endpoint kind on handshake; mismatch closes with code 1008. Replaces the previous single-scope <code class="inline">/dashboard/ws-token</code>.</div>
     <div class="decision"><span class="id">D39</span><strong><code class="inline">/observe</code> and <code class="inline">/leave</code> removed entirely.</strong> Watching a session = holding an open WS. No persistent observer record. No <code class="inline">observers</code> field in ConvState. No <code class="inline">observer_added</code> / <code class="inline">observer_left</code> events. The fact that an operator is connected is ephemeral and not durable.</div>
+    <div class="decision"><span class="id">D40</span><strong><code class="inline">osvi-platform-frontend</code> ships a chat-agent prompt-testing playground in v1, mirroring the voice-agent playground UI.</strong> Available to every user of the platform (not dev-only). Two panels per session: <strong>User panel</strong> (subscribes to <code class="inline">user-stream</code> WS — shows what the WhatsApp customer would see) and <strong>Support panel</strong> (subscribes to <code class="inline">support-stream</code> WS, plus <code class="inline">CommandInput</code> that POSTs structured <code class="inline">{command, message, idempotency_key}</code> to <code class="inline">/sessions/:id/support</code>). Production operator UI for end-customers is owned by their own frontend (out of our repo); our SPA's role is prompt iteration and verification. The list view, filters, deep dashboard UX of the customer's frontend are out of v1 scope for our SPA.</div>
+    <div class="decision"><span class="id">D41</span><strong>Cache self-invalidation. No invalidate API.</strong> Python's <code class="inline">agent_config_service</code> reads <code class="inline">(id, updated_at)</code> first, then keys the config cache by <code class="inline">(account_id, agent_id, updated_at_epoch)</code>. Admin updates change <code class="inline">updated_at</code> → next read constructs a new key → cache miss → repopulate. Old keys TTL out at 5 min. No <code class="inline">/internal/chat-agents/:id/invalidate-config</code> endpoint; no Rails→Python coupling for cache busts.</div>
   </div>
 
   <div class="callout callout--info" style="margin-top:24px">
@@ -1035,7 +1040,7 @@
       <tr><td class="col">O6</td><td class="desc">Voice→chat handoff via <code class="inline">inject-context</code></td><td class="desc">Confirmed v1</td><td class="desc">Old chat had it for voice handoff; new plan preserves payload shape.</td></tr>
       <tr><td class="col">O7</td><td class="desc">Memory injection (contact_profiles join)</td><td class="desc">Confirmed v1</td><td class="desc"><code class="inline">customer_id</code> join works. <code class="inline">agent_id</code> passed as internal BigInt id, not UUID <code class="inline">agent_id</code> field.</td></tr>
       <tr><td class="col">O8</td><td class="desc">Multi-instance reaper coordination</td><td class="desc">Confirmed v1</td><td class="desc">DB-backed deadlines + per-session advisory lock <code class="inline">pg_try_advisory_lock(hashtext(session_id))</code>.</td></tr>
-      <tr><td class="col">O9</td><td class="desc">Frontend: chat-logs route name</td><td class="desc">Eng</td><td class="desc">New route <code class="inline">/chat-logs</code> and <code class="inline">/chat-logs/:id</code>; sidebar entry below Conversations.</td></tr>
+      <tr><td class="col">O9</td><td class="desc">Frontend: playground route placement</td><td class="desc">Eng</td><td class="desc">Mirror voice-agent playground location (currently embedded in agent-detail page). No new sidebar entry — reuses the existing agents nav (D40).</td></tr>
       <tr><td class="col">O10</td><td class="desc">Custom-tool URL allowlist UX</td><td class="desc">Eng</td><td class="desc">Rails admin form, comma-separated list, stored in <code class="inline">chat_agents.config.custom_tool.allowlist</code>.</td></tr>
     </tbody>
   </table>
@@ -1049,8 +1054,8 @@
       <h2>Eight new tables.<br>One <code class="inline">accounts</code> column.<br>One source of truth.</h2>
       <p class="lead">
         Four application mirror tables (<code class="inline">chat_agents</code>,
-        <code class="inline">chat_agents_sessions</code>, <code class="inline">chat_agents_messages</code>,
-        <code class="inline">chat_agents_events</code>) and four LangGraph checkpoint tables
+        <code class="inline">chat_agent_sessions</code>, <code class="inline">chat_agent_messages</code>,
+        <code class="inline">chat_agent_events</code>) and four LangGraph checkpoint tables
         (<code class="inline">checkpoints</code>, <code class="inline">checkpoint_blobs</code>,
         <code class="inline">checkpoint_writes</code>, <code class="inline">checkpoint_migrations</code>).
         All Rails-owned DDL. <code class="inline">accounts</code> gets one new column:
@@ -1122,10 +1127,10 @@
       <path d="M 460 150 L 460 200" stroke="#2d5d3e" stroke-width="1.3" fill="none" marker-end="url(#arrow)"/>
       <text x="468" y="180" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">llm_provider_template_id</text>
 
-      <!-- chat_agents_sessions -->
+      <!-- chat_agent_sessions -->
       <g>
         <rect x="40" y="450" width="540" height="220" rx="12" fill="#c8d6c4" stroke="#2d5d3e" stroke-width="1.5"/>
-        <text x="60" y="482" font-family="JetBrains Mono, monospace" font-size="15" font-weight="600" fill="#0d2419">chat_agents_sessions</text>
+        <text x="60" y="482" font-family="JetBrains Mono, monospace" font-size="15" font-weight="600" fill="#0d2419">chat_agent_sessions</text>
         <text x="60" y="502" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#1a3a2a">One row per conversation · id == LangGraph thread_id (UUID)</text>
         <line x1="60" y1="512" x2="560" y2="512" stroke="#2d5d3e" stroke-opacity="0.3"/>
         <text x="60" y="532" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · chat_agent_id UUID FK · account_id UUID FK</text>
@@ -1144,10 +1149,10 @@
       <text x="766" y="382" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">(account_id, customer_id)</text>
       <text x="766" y="398" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">D19 · no FK in v1</text>
 
-      <!-- chat_agents_messages -->
+      <!-- chat_agent_messages -->
       <g>
         <rect x="40" y="720" width="260" height="170" rx="12" fill="#c8d6c4" stroke="#2d5d3e" stroke-width="1.5"/>
-        <text x="60" y="752" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#0d2419">chat_agents_messages</text>
+        <text x="60" y="752" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#0d2419">chat_agent_messages</text>
         <text x="60" y="772" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#1a3a2a">Mirror · id = LangChain message.id</text>
         <line x1="60" y1="782" x2="280" y2="782" stroke="#2d5d3e" stroke-opacity="0.3"/>
         <text x="60" y="800" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · session_id FK</text>
@@ -1157,10 +1162,10 @@
         <text x="60" y="876" font-family="JetBrains Mono, monospace" font-size="9.5" letter-spacing="0.14em" fill="#2d5d3e">NEW · TABLE 3/4 · UNIQUE partial idx</text>
       </g>
 
-      <!-- chat_agents_events -->
+      <!-- chat_agent_events -->
       <g>
         <rect x="320" y="720" width="260" height="170" rx="12" fill="#c8d6c4" stroke="#2d5d3e" stroke-width="1.5"/>
-        <text x="340" y="752" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#0d2419">chat_agents_events</text>
+        <text x="340" y="752" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#0d2419">chat_agent_events</text>
         <text x="340" y="772" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#1a3a2a">Append-only audit + structured errors</text>
         <line x1="340" y1="782" x2="560" y2="782" stroke="#2d5d3e" stroke-opacity="0.3"/>
         <text x="340" y="800" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · session_id FK (nullable)</text>
@@ -1221,10 +1226,10 @@
 
   <h3 style="margin-top:48px">Mapping rules</h3>
   <ol style="font-size:14.5px; color:var(--ink-2); max-width:80ch">
-    <li><strong>One session = one LangGraph thread.</strong> <code class="inline">chat_agents_sessions.id</code> (UUID, cast to text) is passed as <code class="inline">config["configurable"]["thread_id"]</code> on every graph invocation. <code class="inline">checkpoint_ns="live"</code>.</li>
-    <li><strong>One LangChain message = one row in <code class="inline">chat_agents_messages</code>.</strong> Inserts use <code class="inline">message.id</code> as PK; idempotency replay short-circuits on <code class="inline">UniqueViolation</code> (D27).</li>
+    <li><strong>One session = one LangGraph thread.</strong> <code class="inline">chat_agent_sessions.id</code> (UUID, cast to text) is passed as <code class="inline">config["configurable"]["thread_id"]</code> on every graph invocation. <code class="inline">checkpoint_ns="live"</code>.</li>
+    <li><strong>One LangChain message = one row in <code class="inline">chat_agent_messages</code>.</strong> Inserts use <code class="inline">message.id</code> as PK; idempotency replay short-circuits on <code class="inline">UniqueViolation</code> (D27).</li>
     <li><strong>Checkpoints are the source of truth.</strong> If the mirror diverges from a checkpoint, <code class="inline">reconcile_on_boot</code> pulls graph state via <code class="inline">graph.aget_state(config)</code> and overwrites the mirror's coarse fields (D6).</li>
-    <li><strong><code class="inline">help_requested</code> lives in both places.</strong> <code class="inline">ConvState["help_requested"]</code> drives prompt assembly; <code class="inline">chat_agents_sessions.help_requested</code> is the dashboard mirror.</li>
+    <li><strong><code class="inline">help_requested</code> lives in both places.</strong> <code class="inline">ConvState["help_requested"]</code> drives prompt assembly; <code class="inline">chat_agent_sessions.help_requested</code> is the dashboard mirror.</li>
     <li><strong>Session lifecycle (<code class="inline">ended_at</code>) is application-only.</strong> LangGraph has no "closed" concept — we model "closed" by rejecting new messages when <code class="inline">ended_at IS NOT NULL</code>.</li>
   </ol>
 </section>
@@ -1288,7 +1293,7 @@
     <summary>
       <span class="pnum">2</span>
       <div style="flex:1">
-        <div class="ptitle">chat_agents_sessions</div>
+        <div class="ptitle">chat_agent_sessions</div>
         <div class="psub">One row per conversation · id == LangGraph thread_id</div>
       </div>
       <span class="pmeta"><span class="pill pill--green">new</span></span>
@@ -1319,16 +1324,16 @@
         </tbody>
       </table>
 <pre class="code"><span class="k">CREATE UNIQUE INDEX</span> idx_chat_sessions_open
-  <span class="k">ON</span> chat_agents_sessions (account_id, business_phone_id, customer_id)
+  <span class="k">ON</span> chat_agent_sessions (account_id, business_phone_id, customer_id)
   <span class="k">WHERE</span> ended_at <span class="k">IS NULL</span>;   <span class="c">-- D20</span>
 
-<span class="k">CREATE INDEX</span> idx_chat_sessions_chat_agent       <span class="k">ON</span> chat_agents_sessions (chat_agent_id);
-<span class="k">CREATE INDEX</span> idx_chat_sessions_account_customer <span class="k">ON</span> chat_agents_sessions (account_id, customer_id);
+<span class="k">CREATE INDEX</span> idx_chat_sessions_chat_agent       <span class="k">ON</span> chat_agent_sessions (chat_agent_id);
+<span class="k">CREATE INDEX</span> idx_chat_sessions_account_customer <span class="k">ON</span> chat_agent_sessions (account_id, customer_id);
 <span class="k">CREATE INDEX</span> idx_chat_sessions_help_requested
-  <span class="k">ON</span> chat_agents_sessions (account_id, help_requested) <span class="k">WHERE</span> help_requested;
-<span class="k">CREATE INDEX</span> idx_chat_sessions_mode             <span class="k">ON</span> chat_agents_sessions (account_id, mode);
+  <span class="k">ON</span> chat_agent_sessions (account_id, help_requested) <span class="k">WHERE</span> help_requested;
+<span class="k">CREATE INDEX</span> idx_chat_sessions_mode             <span class="k">ON</span> chat_agent_sessions (account_id, mode);
 <span class="k">CREATE INDEX</span> idx_chat_sessions_inactivity_deadline
-  <span class="k">ON</span> chat_agents_sessions (inactivity_deadline) <span class="k">WHERE</span> ended_at <span class="k">IS NULL</span>;</pre>
+  <span class="k">ON</span> chat_agent_sessions (inactivity_deadline) <span class="k">WHERE</span> ended_at <span class="k">IS NULL</span>;</pre>
     </div>
   </details>
 
@@ -1336,7 +1341,7 @@
     <summary>
       <span class="pnum">3</span>
       <div style="flex:1">
-        <div class="ptitle">chat_agents_messages</div>
+        <div class="ptitle">chat_agent_messages</div>
         <div class="psub">SQL mirror · PK = LangChain message.id · idempotency UNIQUE (D27)</div>
       </div>
       <span class="pmeta"><span class="pill pill--green">new</span></span>
@@ -1347,7 +1352,7 @@
         <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td class="col">id</td><td class="type">UUID</td><td class="desc">PK · mirrors LangChain <code class="inline">message.id</code> · no DB default</td></tr>
-          <tr><td class="col">chat_agents_session_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">chat_agents_sessions(id)</code></td></tr>
+          <tr><td class="col">chat_agent_session_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">chat_agent_sessions(id)</code></td></tr>
           <tr><td class="col">direction</td><td class="type">VARCHAR(16)</td><td class="desc"><code class="inline">inbound</code> | <code class="inline">outbound</code> | <code class="inline">system</code> | <code class="inline">support</code></td></tr>
           <tr><td class="col">role</td><td class="type">VARCHAR(20)</td><td class="desc"><code class="inline">user</code> | <code class="inline">assistant</code> | <code class="inline">system</code> | <code class="inline">tool</code></td></tr>
           <tr><td class="col">content</td><td class="type">TEXT</td><td class="desc">Message body</td></tr>
@@ -1360,14 +1365,14 @@
         </tbody>
       </table>
 <pre class="code"><span class="k">CREATE INDEX</span> idx_chat_messages_session_created
-  <span class="k">ON</span> chat_agents_messages (chat_agents_session_id, created_at);
+  <span class="k">ON</span> chat_agent_messages (chat_agent_session_id, created_at);
 
 <span class="k">CREATE UNIQUE INDEX</span> idx_chat_messages_idempotency
-  <span class="k">ON</span> chat_agents_messages (chat_agents_session_id, idempotency_key)
+  <span class="k">ON</span> chat_agent_messages (chat_agent_session_id, idempotency_key)
   <span class="k">WHERE</span> direction = <span class="s">'inbound'</span> <span class="k">AND</span> idempotency_key <span class="k">IS NOT NULL</span>;   <span class="c">-- D27</span>
 
 <span class="k">CREATE INDEX</span> idx_chat_messages_wa_msg_id
-  <span class="k">ON</span> chat_agents_messages (whatsapp_message_id) <span class="k">WHERE</span> whatsapp_message_id <span class="k">IS NOT NULL</span>;</pre>
+  <span class="k">ON</span> chat_agent_messages (whatsapp_message_id) <span class="k">WHERE</span> whatsapp_message_id <span class="k">IS NOT NULL</span>;</pre>
     </div>
   </details>
 
@@ -1375,7 +1380,7 @@
     <summary>
       <span class="pnum">4</span>
       <div style="flex:1">
-        <div class="ptitle">chat_agents_events</div>
+        <div class="ptitle">chat_agent_events</div>
         <div class="psub">Append-only audit + structured errors</div>
       </div>
       <span class="pmeta"><span class="pill pill--green">new</span></span>
@@ -1386,7 +1391,7 @@
         <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td class="col">id</td><td class="type">UUID</td><td class="desc">PK · <code class="inline">DEFAULT gen_random_uuid()</code></td></tr>
-          <tr><td class="col">chat_agents_session_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">chat_agents_sessions(id)</code> · nullable for global events</td></tr>
+          <tr><td class="col">chat_agent_session_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">chat_agent_sessions(id)</code> · nullable for global events</td></tr>
           <tr><td class="col">account_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">accounts(id)</code> · D8</td></tr>
           <tr><td class="col">kind</td><td class="type">VARCHAR(64)</td><td class="desc"><code class="inline">support_command_received</code>, <code class="inline">support_message_received</code>, <code class="inline">takeover_started</code>, <code class="inline">takeover_ended</code>, <code class="inline">mirror_write_failed</code>, <code class="inline">turn_timeout</code>, <code class="inline">help_requested</code>, <code class="inline">tool_budget_exceeded</code>, <code class="inline">custom_tool_blocked</code>, … <em>(NOT emitted: <code class="inline">observer_added</code>, <code class="inline">observer_left</code> — D39)</em></td></tr>
           <tr><td class="col">actor_kind</td><td class="type">VARCHAR(16)</td><td class="desc"><code class="inline">system</code> | <code class="inline">operator</code> | <code class="inline">user</code> | <code class="inline">agent</code></td></tr>
@@ -1395,9 +1400,9 @@
           <tr><td class="col">created_at</td><td class="type">TIMESTAMPTZ</td><td class="desc">Default <code class="inline">NOW()</code></td></tr>
         </tbody>
       </table>
-<pre class="code"><span class="k">CREATE INDEX</span> idx_chat_events_session_created <span class="k">ON</span> chat_agents_events (chat_agents_session_id, created_at);
-<span class="k">CREATE INDEX</span> idx_chat_events_kind            <span class="k">ON</span> chat_agents_events (kind, created_at);
-<span class="k">CREATE INDEX</span> idx_chat_events_account_kind    <span class="k">ON</span> chat_agents_events (account_id, kind, created_at);</pre>
+<pre class="code"><span class="k">CREATE INDEX</span> idx_chat_events_session_created <span class="k">ON</span> chat_agent_events (chat_agent_session_id, created_at);
+<span class="k">CREATE INDEX</span> idx_chat_events_kind            <span class="k">ON</span> chat_agent_events (kind, created_at);
+<span class="k">CREATE INDEX</span> idx_chat_events_account_kind    <span class="k">ON</span> chat_agent_events (account_id, kind, created_at);</pre>
     </div>
   </details>
 
@@ -1533,17 +1538,17 @@
   <table class="table">
     <thead><tr><th>Concern</th><th>Where it lives</th></tr></thead>
     <tbody>
-      <tr><td class="desc">Conversation messages, ordered with reducers</td><td class="desc">checkpoints (canonical) + <code class="inline">chat_agents_messages</code> (mirror, with <code class="inline">idempotency_key</code> UNIQUE)</td></tr>
-      <tr><td class="desc">Mode (<code class="inline">ai</code> / <code class="inline">takeover</code>)</td><td class="desc"><code class="inline">ConvState["mode"]</code> (canonical) + <code class="inline">chat_agents_sessions.mode</code> (mirror)</td></tr>
-      <tr><td class="desc">Active operator (during takeover)</td><td class="desc"><code class="inline">ConvState["active_human"]</code> + <code class="inline">chat_agents_sessions.active_human</code> (text email)</td></tr>
+      <tr><td class="desc">Conversation messages, ordered with reducers</td><td class="desc">checkpoints (canonical) + <code class="inline">chat_agent_messages</code> (mirror, with <code class="inline">idempotency_key</code> UNIQUE)</td></tr>
+      <tr><td class="desc">Mode (<code class="inline">ai</code> / <code class="inline">takeover</code>)</td><td class="desc"><code class="inline">ConvState["mode"]</code> (canonical) + <code class="inline">chat_agent_sessions.mode</code> (mirror)</td></tr>
+      <tr><td class="desc">Active operator (during takeover)</td><td class="desc"><code class="inline">ConvState["active_human"]</code> + <code class="inline">chat_agent_sessions.active_human</code> (text email)</td></tr>
       <tr><td class="desc">Pending whispers (per-turn guidance)</td><td class="desc"><code class="inline">ConvState["pending_whispers"]</code> only — drained on next AI turn</td></tr>
       <tr><td class="desc">Whisper / tell guidance history</td><td class="desc"><code class="inline">ConvState["support_guidance_history"]</code> only</td></tr>
       <tr><td class="desc"><code class="inline">help_requested</code> flag</td><td class="desc">both (graph for prompt assembly, mirror for dashboard query)</td></tr>
-      <tr><td class="desc">Operator command audit (whisper/tell/takeover/end/close)</td><td class="desc"><code class="inline">chat_agents_events</code> only</td></tr>
-      <tr><td class="desc">Tool call shape</td><td class="desc"><code class="inline">AIMessage.tool_calls</code> (canonical) → <code class="inline">chat_agents_messages.tool_calls</code> JSONB (mirror)</td></tr>
-      <tr><td class="desc">Multi-prompt current state</td><td class="desc"><code class="inline">ConvState["current_state"]</code> + <code class="inline">chat_agents_sessions.current_state</code> (mirror)</td></tr>
-      <tr><td class="desc">Session "closed"</td><td class="desc"><code class="inline">chat_agents_sessions.ended_at</code> only</td></tr>
-      <tr><td class="desc">Reaper deadline</td><td class="desc"><code class="inline">chat_agents_sessions.inactivity_deadline</code> (D25) — DB-backed, multi-pod-safe</td></tr>
+      <tr><td class="desc">Operator command audit (whisper/tell/takeover/end/close)</td><td class="desc"><code class="inline">chat_agent_events</code> only</td></tr>
+      <tr><td class="desc">Tool call shape</td><td class="desc"><code class="inline">AIMessage.tool_calls</code> (canonical) → <code class="inline">chat_agent_messages.tool_calls</code> JSONB (mirror)</td></tr>
+      <tr><td class="desc">Multi-prompt current state</td><td class="desc"><code class="inline">ConvState["current_state"]</code> + <code class="inline">chat_agent_sessions.current_state</code> (mirror)</td></tr>
+      <tr><td class="desc">Session "closed"</td><td class="desc"><code class="inline">chat_agent_sessions.ended_at</code> only</td></tr>
+      <tr><td class="desc">Reaper deadline</td><td class="desc"><code class="inline">chat_agent_sessions.inactivity_deadline</code> (D25) — DB-backed, multi-pod-safe</td></tr>
     </tbody>
   </table>
 </section>
@@ -1652,7 +1657,10 @@
 <span class="c"># WebSocket (token in query string; HMAC over account_id:user_id:operator_email:expires_at:scope)</span>
 <span class="c"># Both sockets are READ-ONLY. Any client→server frame closes the socket (D36).</span>
 <span class="k">WS</span>     /chat-agents/sessions/:id/user-stream?token=&lt;signed&gt;     <span class="c"># scope=user (D35)</span>
-<span class="k">WS</span>     /chat-agents/sessions/:id/support-stream?token=&lt;signed&gt;  <span class="c"># scope=support (D36)</span></pre>
+<span class="k">WS</span>     /chat-agents/sessions/:id/support-stream?token=&lt;signed&gt;  <span class="c"># scope=support (D36)</span>
+
+<span class="c"># No /internal/chat-agents/:id/invalidate-config endpoint — cache busts</span>
+<span class="c"># organically via the cfg_version-keyed cache (D41).</span></pre>
 
   <p style="margin-top:8px"><strong><code class="inline">/support</code> error codes:</strong> 200 (ok); <code class="inline">200 {"state":"no_change"}</code> (takeover no-op); 401 (HMAC fail); 409 (<code class="inline">end</code> from non-holder, takeover by other); 422 (validation: missing <code class="inline">message</code>, both null); 410 (session ended).</p>
 
@@ -1784,7 +1792,7 @@
     <li><strong><code class="inline">session_auto_close_hours</code></strong> (24, hard-coded; not per-account configurable) — after this with no message either way, session is closed.</li>
     <li><strong><code class="inline">graph_turn_timeout_seconds</code></strong> (default 60) — wraps <code class="inline">graph.ainvoke</code>.</li>
     <li><strong><code class="inline">mirror_write_max_retries</code></strong> (default 3) — exponential backoff 100ms / 400ms / 1.6s.</li>
-    <li><strong>Reaper</strong> reads <code class="inline">chat_agents_sessions WHERE inactivity_deadline &lt; now() AND ended_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 100</code>. Caps 10 concurrent reaps per pod. Replaces POC's per-process <code class="inline">_inactivity_tasks</code> dict.</li>
+    <li><strong>Reaper</strong> reads <code class="inline">chat_agent_sessions WHERE inactivity_deadline &lt; now() AND ended_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 100</code>. Caps 10 concurrent reaps per pod. Replaces POC's per-process <code class="inline">_inactivity_tasks</code> dict.</li>
   </ul>
 </section>
 
@@ -1816,8 +1824,14 @@
         <span class="k">return</span> bool(self._url)
 
     <span class="k">async def</span> <span class="f">send</span>(self, payload: dict) -&gt; <span class="k">None</span>:
-        <span class="k">async with</span> httpx.AsyncClient(timeout=<span class="n">5.0</span>) <span class="k">as</span> client:
-            <span class="k">await</span> client.post(self._url, json=payload)</pre>
+        <span class="k">try</span>:
+            <span class="k">async with</span> httpx.AsyncClient(timeout=<span class="n">5.0</span>) <span class="k">as</span> client:
+                <span class="k">await</span> client.post(self._url, json=payload)
+        <span class="k">except</span> httpx.HTTPError <span class="k">as</span> exc:
+            logger.warning(<span class="s">"help_requested_notify_failed"</span>, extra={<span class="s">"err"</span>: str(exc)})
+            <span class="c"># Caller is fire-and-forget; we do NOT re-raise. If persistence is required,</span>
+            <span class="c"># the calling tool writes a chat_agent_events.kind = 'notify_failed' row.</span></pre>
+  <p style="margin-top:8px">On notify failures the <code class="inline">request_human_help</code> tool writes a <code class="inline">chat_agent_events</code> row with <code class="inline">kind='notify_failed'</code> so the failure is durably recorded even though <code class="inline">send()</code> swallowed the exception.</p>
 
   <h3 style="margin-top:24px">Payload</h3>
 <pre class="code">{
@@ -1829,9 +1843,9 @@
   <span class="s">"session_id"</span>:    <span class="s">"&lt;UUID&gt;"</span>,
   <span class="s">"customer_id"</span>:   <span class="s">"9911223344"</span>,
   <span class="s">"last_user_msg"</span>: <span class="s">"I'm really frustrated..."</span>,
-  <span class="s">"deeplink"</span>:      <span class="s">"https://platform.osvi.app/chat-logs/&lt;session_id&gt;"</span>,
   <span class="s">"ts"</span>:            <span class="s">"2026-05-09T10:24:01Z"</span>
 }</pre>
+  <p style="margin-top:6px"><code class="inline">session_id</code> and <code class="inline">account_id</code> are sent verbatim; the receiver constructs whatever deeplink URL their own dashboard uses (we do not host an operator UI for this in v1 — see D40). No <code class="inline">deeplink</code> field is set by us.</p>
 
   <div class="callout">
     <span class="label">Configuration (O1)</span>
@@ -1842,92 +1856,59 @@
 <!-- ============ FRONTEND ============ -->
 <section id="frontend" class="container anchor-pad">
   <div class="section-head">
-    <div class="kicker">12 · Frontend additions · osvi-platform-frontend</div>
+    <div class="kicker">12 · Frontend additions (chat-agent playground)</div>
     <div class="row row--asym">
-      <h2>New <code class="inline">ChatLogs.tsx</code> page.<br>Mirrors <code class="inline">CallLogs.tsx</code>.<br>Coexists; does not replace.</h2>
+      <h2>Chat-agent playground.<br>Mirrors the voice-agent playground.<br>Available to every user of the platform.</h2>
       <p class="lead">
-        Mirrors the existing <code class="inline">/conversations</code> (call-logs) page:
-        list view with filters/search/state badges, detail panel with two scoped WS panels
-        (operator console <code class="inline">support-stream</code> + user-preview
-        <code class="inline">user-stream</code>) and a structured CommandInput that POSTs
-        <code class="inline">/sessions/:id/support</code>. The existing chat UI
-        (LiveKit AgentSession path) is untouched.
+        Per D40, <code class="inline">osvi-platform-frontend</code> ships a chat-agent
+        prompt-testing playground for v1. Same shell + sidebar as today; under the agent
+        detail page, a chat-agent variant of the existing "Test" panel opens two read-only
+        WS streams (<code class="inline">user-stream</code>, <code class="inline">support-stream</code>)
+        plus a <code class="inline">CommandInput</code> form that POSTs structured
+        <code class="inline">/whisper</code> / <code class="inline">/tell</code> /
+        <code class="inline">/takeover</code> / <code class="inline">/end</code> /
+        <code class="inline">/close</code> / plain-message commands to
+        <code class="inline">/sessions/:id/support</code>. Production operator UI for
+        end-customers stays in the customer's own frontend. The existing voice agent
+        playground (LiveKit AgentSession path) is untouched.
       </p>
     </div>
   </div>
 
   <h3>New files</h3>
 <pre class="code">src/
-├── pages/
-│   └── ChatLogs.tsx                    <span class="c"># mirrors Conversations.tsx</span>
+├── pages/playground/
+│   └── ChatAgentPlayground.tsx         <span class="c"># main playground page (mirrors voice playground)</span>
+├── components/chat/
+│   ├── UserPanel.tsx                   <span class="c"># user-perspective stream (read-only, user+ai messages)</span>
+│   ├── SupportPanel.tsx                <span class="c"># operator-perspective stream + CommandInput</span>
+│   └── CommandInput.tsx                <span class="c"># picker (whisper / tell / takeover / end / close / send-plain)</span>
+│                                       <span class="c">#   + message textarea + submit; POSTs to /support (D37)</span>
 ├── hooks/
-│   ├── useChatLogsApi.ts               <span class="c"># mirrors useCallLogsApi.ts</span>
-│   ├── useSupportStreamWs.ts           <span class="c"># operator console WS (scope=support, D36)</span>
-│   └── useUserStreamWs.ts              <span class="c"># user-preview panel WS (scope=user, D35)</span>
-├── components/
-│   ├── ChatDetailPanel.tsx             <span class="c"># right drawer (operator console)</span>
-│   ├── ChatMessageList.tsx             <span class="c"># message thread renderer</span>
-│   ├── UserPreviewPanel.tsx            <span class="c"># WhatsApp-eye view, user-stream WS only</span>
-│   ├── CommandInput.tsx                <span class="c"># picker + textarea; POSTs structured /support body</span>
-│   ├── ChatSessionStateBadges.tsx      <span class="c"># mode + status + help indicators</span>
-│   └── ChatLogsFilters.tsx             <span class="c"># filter bar</span>
-├── lib/
-│   └── wsToken.ts                       <span class="c"># fetches scoped WS token from Rails (D38)</span>
-└── types/
-    └── chatAgents.ts                    <span class="c"># all TS types</span></pre>
+│   └── useSessionStreamWs.ts           <span class="c"># single base hook: useSessionStreamWs(sessionId, scope)</span>
+└── lib/
+    └── wsToken.ts                       <span class="c"># fetches scoped WS token from Rails (D38)</span></pre>
 
   <h3 style="margin-top:24px">Routing + sidebar</h3>
-<pre class="code"><span class="c">// src/App.tsx — inside &lt;PrivateRoute&gt;&lt;AppLayout/&gt;&lt;/PrivateRoute&gt;</span>
-&lt;Route path=<span class="s">"/chat-logs"</span> element={&lt;ChatLogs /&gt;} /&gt;
-&lt;Route path=<span class="s">"/chat-logs/:id"</span> element={&lt;ChatLogs /&gt;} /&gt;
+  <p>Add the chat-agent playground under the same nav location as the voice-agent playground (currently embedded inside the agent detail page at <code class="inline">/agents/:id</code>). Match the voice convention: a chat-agent has its own detail/playground route that opens the playground component for the selected agent. Existing sidebar entry for agents covers both — no new top-level nav item needed.</p>
 
-<span class="c">// src/components/Sidebar.tsx — below Conversations</span>
-{ to: <span class="s">'/chat-logs'</span>, label: <span class="s">'Chat Logs'</span>, Icon: RiMessage3Line }</pre>
+  <h3 style="margin-top:24px">Auth + WS token flow (D38)</h3>
+<pre class="code"><span class="c">// useSessionStreamWs.ts — single base hook</span>
+<span class="k">export function</span> <span class="f">useSessionStreamWs</span>(sessionId: string, scope: <span class="s">'user'</span> | <span class="s">'support'</span>) {
+  <span class="c">// Mints POST /chat-agents/sessions/:id/ws-token { scope } and opens</span>
+  <span class="c">// new WebSocket(`${ws_url}?token=…`). Read-only consumer. Reconnects with</span>
+  <span class="c">// exponential backoff 1s → 30s. Token-scope mismatch closes with code 1008 (D38).</span>
+}</pre>
+  <p style="margin-top:8px"><code class="inline">UserPanel</code> calls the hook with <code class="inline">scope="user"</code>; <code class="inline">SupportPanel</code> calls it with <code class="inline">scope="support"</code>.</p>
 
-  <h3 style="margin-top:24px">Two scoped WS subscriptions per detail page (D38)</h3>
-<pre class="code"><span class="c">// useSupportStreamWs.ts (operator console — D36)</span>
-<span class="k">const</span> { data } = <span class="k">await</span> authenticatedApiCall(
-  <span class="s">`/chat-agents/sessions/${id}/ws-token`</span>, token,
-  { method: <span class="s">'POST'</span>, body: JSON.stringify({ scope: <span class="s">'support'</span> }) },
-);
-<span class="c">// data: { token, expires_at, ws_url }</span>
-<span class="k">const</span> ws = <span class="k">new</span> WebSocket(<span class="s">`${data.ws_url}?token=${encodeURIComponent(data.token)}`</span>);
-<span class="c">// READ-ONLY: ws.onmessage only. Sending a frame is a protocol violation (D36).</span>
+  <h3 style="margin-top:24px">CommandInput</h3>
+  <p>A picker (<code class="inline">whisper</code> | <code class="inline">tell</code> | <code class="inline">takeover</code> | <code class="inline">end</code> | <code class="inline">close</code> | <code class="inline">send</code> for plain message) plus a message textarea. On submit, POSTs <code class="inline">{command, message, idempotency_key}</code> to <code class="inline">/chat-agents/sessions/:id/support</code>. No slash parsing; the picker is the structured surface (D37). Component generates a fresh idempotency key per submit.</p>
 
-<span class="c">// useUserStreamWs.ts (user preview panel — D35)</span>
-<span class="k">const</span> { data } = <span class="k">await</span> authenticatedApiCall(
-  <span class="s">`/chat-agents/sessions/${id}/ws-token`</span>, token,
-  { method: <span class="s">'POST'</span>, body: JSON.stringify({ scope: <span class="s">'user'</span> }) },
-);
-<span class="k">const</span> ws = <span class="k">new</span> WebSocket(<span class="s">`${data.ws_url}?token=${encodeURIComponent(data.token)}`</span>);
-<span class="c">// Receives ONLY message_received frames where direction IN ('user','ai') (D35).</span>
-<span class="c">// Reconnect: exponential backoff 1s → 30s. On reconnect, refetch state via REST.</span>
-<span class="c">// Token-scope mismatch on handshake closes with code 1008 (D38).</span></pre>
-
-  <h3 style="margin-top:24px">CommandInput (structured, no parser)</h3>
-  <p>Two distinct controls — a command picker + a message textarea. On submit, POSTs the structured <code class="inline">/support</code> body. No slash-prefix parsing anywhere on the client.</p>
-<pre class="code">&lt;CommandInput
-  sessionId={id}
-  onSubmit={<span class="k">async</span> ({ command, message }) =&gt; {
-    <span class="k">await</span> api.postSupport(id, {
-      command,                                  <span class="c">// null | "whisper" | "tell" | "takeover" | "end" | "close"</span>
-      message,                                  <span class="c">// string | null</span>
-      idempotency_key: crypto.randomUUID(),
-    });
-  }}
-  commands={[
-    { value: <span class="k">null</span>,        label: <span class="s">'Send message'</span>,  needsMessage: <span class="k">true</span>,  desc: <span class="s">'Plain operator message; allowed in any mode (D37)'</span> },
-    { value: <span class="s">'whisper'</span>,   label: <span class="s">'Whisper'</span>,       needsMessage: <span class="k">true</span>,  desc: <span class="s">'Hint to AI, invisible to user'</span> },
-    { value: <span class="s">'tell'</span>,      label: <span class="s">'Tell'</span>,          needsMessage: <span class="k">true</span>,  desc: <span class="s">'Hint + immediate AI turn'</span> },
-    { value: <span class="s">'takeover'</span>,  label: <span class="s">'Take over'</span>,     needsMessage: <span class="k">false</span>, desc: <span class="s">'Take control from AI; no-op if already in takeover'</span> },
-    { value: <span class="s">'end'</span>,       label: <span class="s">'End takeover'</span>,  needsMessage: <span class="k">false</span>, desc: <span class="s">'Release takeover, resume AI (holder only)'</span> },
-    { value: <span class="s">'close'</span>,     label: <span class="s">'Close session'</span>, needsMessage: <span class="k">false</span>, desc: <span class="s">'Archive session'</span> },
-  ]}
-/&gt;</pre>
-  <p>Picker is a dropdown or button row. Textarea is required when the chosen <code class="inline">command</code> is <code class="inline">whisper</code>/<code class="inline">tell</code> or when <code class="inline">command</code> is null (plain message). Enter submits. 422 from server → <code class="inline">toast.error("message required")</code>. 409 → <code class="inline">toast.error("already taken by &lt;email&gt;" | "not the holder")</code>. 200 <code class="inline">state:"no_change"</code> → <code class="inline">toast.info("already in takeover")</code>. Successes → <code class="inline">toast.success</code>. Polling fallback (5s) when WS errors.</p>
-
-  <h3 style="margin-top:24px">User preview panel (D35)</h3>
-  <p><code class="inline">UserPreviewPanel.tsx</code> opens the user-stream WS and renders ONLY <code class="inline">message_received</code> frames where <code class="inline">direction IN ('user','ai')</code>. It is a "WhatsApp-eye view" — what the end-user sees. Operators use it to sanity-check the customer experience while running the operator console next to it. No commands. No whispers. No audit. No mode badges. Pure conversation surface.</p>
+  <h3 style="margin-top:24px">User &amp; Support panels</h3>
+  <ul class="dashes" style="font-size:14.5px; max-width:80ch">
+    <li><strong>User panel</strong> — read-only stream of user/ai messages from <code class="inline">user-stream</code> WS. Mirrors what the WhatsApp customer would see.</li>
+    <li><strong>Support panel</strong> — read-only stream of all messages + audit events from <code class="inline">support-stream</code> WS, plus a <code class="inline">CommandInput</code> for structured <code class="inline">/support</code> POSTs. Both panels handle reconnect-on-drop via the base hook's exponential backoff.</li>
+  </ul>
 </section>
 
 <!-- ============ PHASE STEPPER ============ -->
@@ -1958,7 +1939,7 @@
     <a class="step" href="#phase-10"><span class="num">10</span><span class="nm">Routes WS<br>Vertical Slice</span></a>
     <a class="step" href="#phase-11"><span class="num">11</span><span class="nm">Reaper<br>Reconcile</span></a>
     <a class="step" href="#phase-12"><span class="num">12</span><span class="nm">Rails<br>Proxy</span></a>
-    <a class="step" href="#phase-13"><span class="num">13</span><span class="nm">Frontend<br>ChatLogs</span></a>
+    <a class="step" href="#phase-13"><span class="num">13</span><span class="nm">Frontend<br>Playground</span></a>
     <a class="step" href="#phase-14"><span class="num">14</span><span class="nm">E2E<br>Observability</span></a>
   </div>
 
@@ -1977,12 +1958,12 @@
       <ol class="step-list">
         <li><code class="inline">20260509000001_add_chat_agents_enabled_to_accounts.rb</code> — column add (D30).</li>
         <li><code class="inline">20260509000002_create_chat_agents.rb</code> — main agent table.</li>
-        <li><code class="inline">20260509000003_create_chat_agents_sessions.rb</code> — sessions mirror.</li>
-        <li><code class="inline">20260509000004_create_chat_agents_messages.rb</code> — messages mirror.</li>
-        <li><code class="inline">20260509000005_create_chat_agents_events.rb</code> — audit + structured errors.</li>
+        <li><code class="inline">20260509000003_create_chat_agent_sessions.rb</code> — sessions mirror.</li>
+        <li><code class="inline">20260509000004_create_chat_agent_messages.rb</code> — messages mirror.</li>
+        <li><code class="inline">20260509000005_create_chat_agent_events.rb</code> — audit + structured errors.</li>
         <li><code class="inline">20260509000006_create_langgraph_checkpoint_tables.rb</code> — Rails-owned DDL for <code class="inline">langgraph-checkpoint-postgres==3.0.5</code>; seeds <code class="inline">checkpoint_migrations</code> versions 1..5.</li>
       </ol>
-      <p>Models in <code class="inline">app/models/{chat_agent,chat_agents_session,chat_agents_message,chat_agents_event}.rb</code>. <code class="inline">Admin::ChatAgentsController</code> with full CRUD + <code class="inline">activate</code> / <code class="inline">disable</code> member actions. Strong params: <code class="inline">:llm_provider_template_id</code>, <code class="inline">llm_config: {}</code>, <code class="inline">agent_config: {}</code>, <code class="inline">memory_config: {}</code>, <code class="inline">config: {}</code>.</p>
+      <p>Models in <code class="inline">app/models/{chat_agent,chat_agent_session,chat_agent_message,chat_agent_event}.rb</code>. <code class="inline">Admin::ChatAgentsController</code> with full CRUD + <code class="inline">activate</code> / <code class="inline">disable</code> member actions. Strong params: <code class="inline">:llm_provider_template_id</code>, <code class="inline">llm_config: {}</code>, <code class="inline">agent_config: {}</code>, <code class="inline">memory_config: {}</code>, <code class="inline">config: {}</code>.</p>
       <h5>Acceptance</h5>
       <p>Rails admin can create/edit/disable a chat agent through the UI; rows appear in DB. <code class="inline">accounts.chat_agents_enabled</code> toggleable per account.</p>
     </div>
@@ -2009,16 +1990,16 @@
     <summary>
       <span class="pnum">3</span>
       <div style="flex:1">
-        <div class="ptitle">Python: agent_config_service (Redis cache)</div>
-        <div class="psub">cfg_version-keyed cache · invalidate-config endpoint</div>
+        <div class="ptitle">Python: agent_config_service (Redis cache, self-invalidating)</div>
+        <div class="psub">cfg_version-keyed cache · 2-step read · no invalidate API (D41)</div>
       </div>
-      <span class="pmeta"><span class="pill">D9 · D11</span></span>
+      <span class="pmeta"><span class="pill">D9 · D11 · D41</span></span>
       <span class="chev">▶</span>
     </summary>
     <div class="phase-body">
-      <p>Cache key <code class="inline">chat_agent_config:{account_id}:{agent_id}:{cfg_version}</code> where <code class="inline">cfg_version = chat_agents.updated_at</code> epoch (defense-in-depth invalidation per D9). 5-minute TTL. Internal route <code class="inline">POST /internal/chat-agents/:id/invalidate-config</code> for explicit busts called by Rails admin on every successful update/destroy/status flip.</p>
+      <p>Two-step read pattern (D41): (1) <code class="inline">SELECT id, updated_at FROM chat_agents WHERE account_id = $1 AND agent_id = $2</code>; (2) build cache key <code class="inline">chat_agent_config:{account_id}:{agent_id}:{updated_at_epoch}</code>; (3) Redis lookup — hit returns the cached config dict, miss does a full <code class="inline">SELECT *</code>, caches it, returns it. 5-minute TTL. <strong>No invalidate-config endpoint.</strong> Old keys with stale <code class="inline">updated_at</code> sit in Redis until their TTL expires; they are never read again because every subsequent read constructs a key with the new <code class="inline">updated_at</code>.</p>
       <h5>Acceptance</h5>
-      <p>Concurrent fetches go to cache; admin update busts cache; cross-account lookups fail tenant-isolation tests.</p>
+      <p>Concurrent fetches go to cache; cross-account lookups fail tenant-isolation tests; when admin updates an agent's <code class="inline">updated_at</code>, the next Python read hits a fresh key and rebuilds; stale keys evict via TTL only.</p>
     </div>
   </details>
 
@@ -2094,14 +2075,14 @@
     <summary>
       <span class="pnum">8</span>
       <div style="flex:1">
-        <div class="ptitle">Python: lock manager + structured support dispatch + conversation service</div>
-        <div class="psub">per-turn advisory lock · turn_done event · structured dispatch (D37) · CAS · D34</div>
+        <div class="ptitle">Python: lock manager + structured support dispatch + conversation service + mirror service</div>
+        <div class="psub">per-turn advisory lock · turn_done event · structured dispatch (D37) · CAS · D34 · mirror_service (S5)</div>
       </div>
       <span class="pmeta"><span class="pill">D22 · D34 · D37</span></span>
       <span class="chev">▶</span>
     </summary>
     <div class="phase-body">
-      <p><code class="inline">lock_service.py</code>: <code class="inline">pg_try_advisory_lock(hashtext(session_id))</code> per session, <strong>per turn</strong>. <strong>No parser</strong> — <code class="inline">support_service.py</code> performs structured dispatch on <code class="inline">{command, message}</code> per D37 (whisper / tell / takeover / end / close / plain message). <code class="inline">conversation_service.py</code> implements <code class="inline">post_user_message</code> per D13 + §17.1. All branches use CAS patterns and the <code class="inline">turn_done</code> event barrier (D22) awaited <strong>outside</strong> the lock.</p>
+      <p><code class="inline">lock_service.py</code>: <code class="inline">pg_try_advisory_lock(hashtext(session_id))</code> per session, <strong>per turn</strong>. <strong>No parser</strong> — <code class="inline">support_service.py</code> performs structured dispatch on <code class="inline">{command, message}</code> per D37 (whisper / tell / takeover / end / close / plain message); it owns business rules + dispatch only and delegates lock acquisition to <code class="inline">lock_service</code>, persistence to <code class="inline">mirror_service</code> (shared with <code class="inline">reply_service</code>), and event publish to <code class="inline">stream_service</code>. No DB/Redis I/O or asyncio primitives in <code class="inline">support_service.py</code> (S5). <code class="inline">mirror_service.py</code> owns all mirror-table inserts. <code class="inline">conversation_service.py</code> implements <code class="inline">post_user_message</code> per D13 + §17.1. All branches use CAS patterns and the <code class="inline">turn_done</code> event barrier (D22) awaited <strong>outside</strong> the lock.</p>
       <h5>Acceptance</h5>
       <p>Concurrent <code class="inline">command="takeover"</code> calls — exactly one succeeds; the rest see <code class="inline">200 {"state":"no_change"}</code> (D37). Whisper during in-flight turn doesn't deadlock. <code class="inline">Command(resume=None)</code> workaround applied (D34) on the <code class="inline">end</code> branch where there IS a pending interrupt; <code class="inline">None</code> passed directly elsewhere.</p>
     </div>
@@ -2173,7 +2154,7 @@
       <span class="chev">▶</span>
     </summary>
     <div class="phase-body">
-      <p>Rails-side proxy controllers (§11.3, §11.4 of plan). <code class="inline">app/controllers/concerns/chat_agent_hmac_signer.rb</code> shared HMAC helper. <code class="inline">app/utils/python_engine_utils.rb</code> extended with <code class="inline">request_for_chat_agent_support</code>, <code class="inline">request_for_chat_agent_ws_token</code>, etc. <code class="inline">POST /chat-agents/sessions/:id/ws-token</code> mints a 5-minute scoped (<code class="inline">{scope: "user"|"support"}</code>) HMAC-signed token (§11.5; D38).</p>
+      <p>Rails-side proxy controllers (§11.3, §11.4 of plan). <code class="inline">app/controllers/concerns/chat_agent_hmac_signer.rb</code> shared HMAC helper. <code class="inline">app/utils/python_engine_utils.rb</code> extended with <code class="inline">request_chat_agent_support</code>, <code class="inline">request_chat_agent_ws_token</code>, etc. (S1 — no <code class="inline">_for_</code> infix; the shared signing helper is <code class="inline">request_chat_agent_signed</code>). <strong>No <code class="inline">request_chat_agent_invalidate_config</code></strong> — cache is self-invalidating (D41). <code class="inline">POST /chat-agents/sessions/:id/ws-token</code> mints a 5-minute scoped (<code class="inline">{scope: "user"|"support"}</code>) HMAC-signed token (§11.5; D38).</p>
       <div class="callout callout--info">
         <span class="label">No Rails streaming work needed (§11.6)</span>
         <p style="margin:0">D4 settled this: REST polling + WebSocket-direct-with-Rails-issued-token. No <code class="inline">response.stream</code>, no <code class="inline">Net::HTTP read_body</code>. Rails simply mints a token; the WebSocket goes direct to Python.</p>
@@ -2187,16 +2168,16 @@
     <summary>
       <span class="pnum">13</span>
       <div style="flex:1">
-        <div class="ptitle">Frontend: ChatLogs page + two scoped WS panels + CommandInput</div>
-        <div class="psub">support-stream + user-stream (D35/D36) · scoped tokens (D38) · structured /support · polling fallback</div>
+        <div class="ptitle">Frontend: chat-agent playground</div>
+        <div class="psub">mirrors voice-agent playground (D40) · User panel + Support panel + CommandInput</div>
       </div>
       <span class="pmeta"><span class="pill">osvi-platform-frontend</span></span>
       <span class="chev">▶</span>
     </summary>
     <div class="phase-body">
-      <p>All files in §12 (Frontend additions). Routing + sidebar. Two WS subscriptions per detail page — <code class="inline">support-stream</code> for the operator console (D36), <code class="inline">user-stream</code> for the user-preview panel (D35) — each minted with its own scoped token (D38). Structured <code class="inline">CommandInput</code> (picker + textarea, no slash parsing). <code class="inline">UserPreviewPanel</code> renders user+ai message frames only. Polling fallback when WS errors.</p>
+      <p>Build the chat-agent playground in our SPA mirroring the voice-agent playground UI (D40). All files in §12 (Frontend additions): <code class="inline">ChatAgentPlayground.tsx</code>, <code class="inline">UserPanel.tsx</code>, <code class="inline">SupportPanel.tsx</code>, <code class="inline">CommandInput.tsx</code>, <code class="inline">useSessionStreamWs.ts</code>, <code class="inline">wsToken.ts</code>. <code class="inline">UserPanel</code> subscribes to <code class="inline">user-stream</code>; <code class="inline">SupportPanel</code> subscribes to <code class="inline">support-stream</code> and embeds <code class="inline">CommandInput</code> which POSTs structured <code class="inline">/support</code> calls (D37) with a fresh idempotency key per submit.</p>
       <h5>Acceptance</h5>
-      <p>Operator can list sessions, open a detail, see live updates on both panels, run whisper / takeover / end / close / plain-message via the CommandInput controls, see structured errors as toasts (422 missing message; 409 not holder; 200 <code class="inline">no_change</code> for double takeover). Mobile responsive (parity with Conversations).</p>
+      <p>User panel renders user/ai messages from <code class="inline">user-stream</code> WS; Support panel renders all messages + events from <code class="inline">support-stream</code> WS and posts <code class="inline">/whisper</code>, <code class="inline">/tell</code>, <code class="inline">/takeover</code> via <code class="inline">/sessions/:id/support</code> with idempotency keys; reconnect-on-drop works.</p>
     </div>
   </details>
 
@@ -2232,18 +2213,19 @@
   <div class="section-head">
     <div class="kicker">14 · Load-bearing code (§17)</div>
     <div class="row row--asym">
-      <h2>The nine snippets you can't paraphrase.</h2>
+      <h2>The ten snippets you can't paraphrase.</h2>
       <p class="lead">
         These cover the per-turn driver, the new LangChain provider helper, the flag-only
         <code class="inline">request_human_help</code> tool, HMAC verification, scoped WS-token
         verification (D38), the SSRF-guarded custom tool, the multi-instance reaper, the
-        idempotency-replay insert, and the structured <code class="inline">/support</code>
-        route handler (D37).
+        idempotency-replay insert, the structured <code class="inline">/support</code>
+        route handler (D37), and the self-invalidating <code class="inline">agent_config_service</code> (D41).
       </p>
     </div>
   </div>
 
   <h3>17.1 · <code class="inline">post_user_message</code> (POC pattern preserved, D13)</h3>
+  <p>Refactored into a thin orchestrator + four helpers. Each helper owns one concern. The orchestrator becomes ~10 lines.</p>
 <pre class="code"><span class="c"># services/langgraph_chat/conversation_service.py</span>
 
 <span class="k">async def</span> <span class="f">post_user_message</span>(
@@ -2258,104 +2240,68 @@
     user_text: str,
     idempotency_key: str,          <span class="c"># whatsapp_message_id or Idempotency-Key</span>
 ) -&gt; dict:
-    <span class="s">"""One user-turn. Caller owns the txn + advisory lock."""</span>
+    <span class="s">"""Orchestrate one user-turn. Caller owns the txn + advisory lock."""</span>
+    cached = <span class="k">await</span> _check_idempotency(conn, conv_id, idempotency_key)
+    <span class="k">if</span> cached:
+        <span class="k">return</span> cached
+    cfg, sess = <span class="k">await</span> _load_and_validate_context(conn, account_id, agent_id, conv_id)
+    input_state = <span class="k">await</span> _build_input_state(cfg, sess, sess[<span class="s">"customer_id"</span>], user_text)
+    <span class="k">return await</span> reply_service.run_turn(
+        graph=graph, pool=pool, conn=conn, conv_id=conv_id,
+        input_state=input_state, cfg=cfg, idempotency_key=idempotency_key,
+    )</pre>
+  <p style="margin-top:8px">Helper signatures (bodies elided — original logic relocates verbatim):</p>
+<pre class="code"><span class="k">async def</span> <span class="f">_check_idempotency</span>(conn, conv_id: str, idempotency_key: str) -&gt; dict | <span class="k">None</span>:
+    <span class="s">"""Return cached reply dict if this idempotency_key was already processed (D27); else None."""</span>
+    <span class="c"># implementation details — fetches via fetch_message_by_idempotency_key(...)</span>
 
-    <span class="c"># Idempotency replay (D27)</span>
-    existing = <span class="k">await</span> fetch_message_by_idempotency_key(conn, conv_id, idempotency_key)
-    <span class="k">if</span> existing <span class="k">is not None</span>:
-        <span class="k">return</span> existing.to_reply_dict()
 
-    <span class="c"># Config (Redis-cached by account_id+agent_id+cfg_version, D9)</span>
-    cfg = <span class="k">await</span> fetch_chat_agent_config(account_id, agent_id)
-    <span class="k">if</span> cfg <span class="k">is None or</span> cfg[<span class="s">"status"</span>] != <span class="s">"active"</span>:
-        <span class="k">raise</span> <span class="t">ValueError</span>(<span class="s">"chat_agent_inactive_or_missing"</span>)
+<span class="k">async def</span> <span class="f">_load_and_validate_context</span>(
+    conn, account_id: str, agent_id: str, conv_id: str,
+) -&gt; tuple[dict, dict]:
+    <span class="s">"""Return (cfg, sess) or raise. Validates active agent + non-ended session."""</span>
+    <span class="c"># implementation details — Redis-cached fetch_chat_agent_config(...) + fetch_session_row(...)</span>
+    <span class="c"># raises ValueError("chat_agent_inactive_or_missing"), NotFoundError("session_not_found"),</span>
+    <span class="c"># GoneError("session_ended")</span>
 
-    sess = <span class="k">await</span> fetch_session_row(conn, conv_id, account_id)
-    <span class="k">if</span> sess <span class="k">is None</span>:
-        <span class="k">raise</span> NotFoundError(<span class="s">"session_not_found"</span>)
-    <span class="k">if</span> sess[<span class="s">"ended_at"</span>] <span class="k">is not None</span>:
-        <span class="k">raise</span> GoneError(<span class="s">"session_ended"</span>)
 
-    llm = create_langchain_chat_llm(
-        cfg[<span class="s">"llm_provider_template"</span>][<span class="s">"provider"</span>],
-        cfg.get(<span class="s">"llm_config"</span>) <span class="k">or</span> {},
-    )
+<span class="k">async def</span> <span class="f">_build_input_state</span>(
+    cfg: dict, sess: dict, customer_id: str, user_text: str,
+) -&gt; dict:
+    <span class="s">"""Build the LangGraph input dict. Memory injection (D19, O7) happens here."""</span>
+    <span class="c"># implementation details — assembles HumanMessage, optional contact_profiles memory block,</span>
+    <span class="c"># and the ConvState fields (POC read-then-write pattern, D13).</span></pre>
 
-    <span class="c"># Memory injection (D19, O7)</span>
-    customer_id = sess[<span class="s">"customer_id"</span>]
-    mem_block = <span class="k">None</span>
-    <span class="k">if</span> (cfg[<span class="s">"memory_config"</span>] <span class="k">or</span> {}).get(<span class="s">"enabled"</span>) <span class="k">and</span> customer_id:
-        ctx = <span class="k">await</span> get_contact_context(
-            account_id, customer_id,
-            memory_scope=cfg[<span class="s">"memory_config"</span>].get(<span class="s">"memory_scope"</span>, <span class="s">"org"</span>),
-            agent_id=cfg[<span class="s">"id"</span>],            <span class="c"># internal BigInt id, NOT the UUID `agent_id` string</span>
-        )
-        mem_block = format_memory_for_prompt(ctx)
+<pre class="code"><span class="c"># services/langgraph_chat/reply_service.py</span>
 
-    sys_prompt = cfg[<span class="s">"system_prompt"</span>] <span class="k">or</span> <span class="s">""</span>
-    <span class="k">if</span> mem_block:
-        sys_prompt = sys_prompt + <span class="s">"\n\n"</span> + mem_block
+<span class="k">async def</span> <span class="f">run_turn</span>(
+    *,
+    graph,
+    pool,
+    conn,
+    conv_id: str,
+    input_state: dict,
+    cfg: dict,                      <span class="c"># the agent-config dict (from agent_config_service)</span>
+    idempotency_key: str,
+) -&gt; dict:
+    <span class="s">"""graph.ainvoke + mirror write + token counter for one turn.
 
-    now = datetime.now(timezone.utc).isoformat()
-    human_msg = HumanMessage(content=user_text, additional_kwargs={<span class="s">"ts"</span>: now})
+    Splits the 'ai' vs 'takeover' branches; persists inbound first, applies the
+    60s graph_turn_timeout_seconds, writes mirror in a separate txn (D7) on the
+    'ai' path, and returns the reply dict. POC takeover branch uses
+    graph.aupdate_state with as_node="human_gate" — no AI invocation.
 
-    config = {<span class="s">"configurable"</span>: {
-        <span class="s">"thread_id"</span>: conv_id,
-        <span class="s">"checkpoint_ns"</span>: <span class="s">"live"</span>,
-        <span class="s">"llm"</span>: llm,
-        <span class="s">"tools"</span>: build_tools_for_agent(cfg[<span class="s">"agent_config"</span>], session_ctx={
-            <span class="s">"account_id"</span>: account_id, <span class="s">"session_id"</span>: conv_id, <span class="s">"operator_email"</span>: operator_email,
-        }),
-        <span class="s">"async_pool"</span>: pool,
-        <span class="s">"state_system_prompt"</span>: sys_prompt,
-        <span class="s">"agent_id"</span>: cfg[<span class="s">"agent_id"</span>],
-        <span class="s">"account_id"</span>: account_id,
-    }}
-
-    <span class="c"># Persist inbound message FIRST (idempotent on UNIQUE violation)</span>
-    <span class="k">await</span> persist_inbound_message(conn, conv_id, human_msg, idempotency_key)
-
-    <span class="k">if</span> sess[<span class="s">"mode"</span>] == <span class="s">"ai"</span>:
-        <span class="c"># Read-then-write — POC pattern (D13)</span>
-        graph_state = <span class="k">await</span> graph.aget_state(config)
-        values = graph_state.values <span class="k">if</span> graph_state <span class="k">else</span> {}
-        input_state = {
-            <span class="s">"messages"</span>: [human_msg],
-            <span class="s">"mode"</span>: values.get(<span class="s">"mode"</span>, <span class="s">"ai"</span>),
-            <span class="s">"pending_whispers"</span>: list(values.get(<span class="s">"pending_whispers"</span>) <span class="k">or</span> []),
-            <span class="s">"support_guidance_history"</span>: list(values.get(<span class="s">"support_guidance_history"</span>) <span class="k">or</span> []),
-            <span class="s">"active_human"</span>: values.get(<span class="s">"active_human"</span>),
-            <span class="s">"help_requested"</span>: bool(values.get(<span class="s">"help_requested"</span>, <span class="k">False</span>)),
-            <span class="s">"last_user_msg_at"</span>: now,
-            <span class="s">"last_support_msg_at"</span>: values.get(<span class="s">"last_support_msg_at"</span>),
-            <span class="s">"current_state"</span>: values.get(<span class="s">"current_state"</span>),
-            <span class="s">"tool_calls_this_turn"</span>: <span class="n">0</span>,
-        }
-
-        <span class="k">try</span>:
-            result = <span class="k">await</span> asyncio.wait_for(
-                graph.ainvoke(input_state, config),
-                timeout=cfg[<span class="s">"config"</span>].get(<span class="s">"graph_turn_timeout_seconds"</span>, <span class="n">60</span>),
-            )
-        <span class="k">except</span> asyncio.TimeoutError:
-            <span class="k">await</span> persist_event(conn, conv_id, account_id, <span class="s">"turn_timeout"</span>, actor=<span class="s">"system"</span>)
-            <span class="k">raise</span>
-
-        assistant_text = extract_assistant_text(result)
-        <span class="k">await</span> persist_outbound_message(conn, conv_id, assistant_text, result)
-        <span class="k">await</span> update_token_total(conn, conv_id, count_tokens(result))
-        <span class="k">return</span> {
-            <span class="s">"reply"</span>: assistant_text,
-            <span class="s">"session_id"</span>: conv_id,
-            <span class="s">"mode"</span>: <span class="s">"ai"</span>,
-            <span class="s">"help_requested"</span>: result.get(<span class="s">"help_requested"</span>, <span class="k">False</span>),
-        }
-    <span class="k">else</span>:
-        <span class="c"># takeover mode — DO NOT trigger ai_agent (POC pattern)</span>
-        <span class="k">await</span> graph.aupdate_state(
-            config, {<span class="s">"messages"</span>: [human_msg]}, as_node=<span class="s">"human_gate"</span>
-        )
-        <span class="k">return</span> {<span class="s">"reply"</span>: <span class="k">None</span>, <span class="s">"session_id"</span>: conv_id, <span class="s">"mode"</span>: <span class="s">"takeover"</span>}</pre>
+    Naming convention (S3): the local dict passed to graph.ainvoke as the
+    LangGraph RunnableConfig is named `run_config`, never `config` — `config`
+    is reserved for the agent-config dict (here `cfg`) and would shadow the
+    LangGraph RunnableConfig type if reused.
+    """</span>
+    <span class="c"># implementation details — the original §17.1 long body lives here,</span>
+    <span class="c"># split between _run_ai_turn(...) and _run_takeover_turn(...) internals.</span>
+    <span class="c"># Inside those helpers:</span>
+    <span class="c">#   run_config = {"configurable": {"thread_id": conv_id, "account_id": ..., "agent_id": ...}}</span>
+    <span class="c">#   await graph.ainvoke(input_state, config=run_config)</span></pre>
+  <p style="margin-top:8px">The original §17.1 long body becomes the helper bodies (verbatim relocation, just split). The helpers preserve every behavior — POC read-then-write pattern (D13), idempotency replay (D27), memory injection (D19/O7), <code class="inline">graph_turn_timeout_seconds</code> (D24), takeover branch routing.</p>
 
   <h3 style="margin-top:32px">17.2 · <code class="inline">create_langchain_chat_llm</code> (D10)</h3>
 <pre class="code"><span class="c"># services/provider_helper_service.py — APPEND, do NOT modify create_llm_for_chat (voice)</span>
@@ -2424,7 +2370,7 @@
     expected = hmac.new(
         settings.chat_agent_shared_secret.encode(),
         payload.encode(),
-        hashlib.sha256,
+        digestmod=hashlib.sha256,
     ).hexdigest()
     <span class="k">if not</span> hmac.compare_digest(expected, x_service_auth):
         <span class="k">raise</span> HTTPException(<span class="n">401</span>, <span class="s">"invalid_signature"</span>)
@@ -2448,7 +2394,7 @@
         <span class="k">raise</span> HTTPException(<span class="n">401</span>, <span class="s">"token_expired"</span>)
     payload = <span class="s">f"{account_id}:{user_id}:{operator_email}:{expires_at}:{scope}"</span>
     expected = hmac.new(
-        settings.chat_agent_shared_secret.encode(), payload.encode(), hashlib.sha256
+        settings.chat_agent_shared_secret.encode(), payload.encode(), digestmod=hashlib.sha256
     ).hexdigest()
     <span class="k">if not</span> hmac.compare_digest(expected, signature):
         <span class="k">raise</span> HTTPException(<span class="n">401</span>, <span class="s">"invalid_token_signature"</span>)
@@ -2513,43 +2459,59 @@ _FORBIDDEN_HEADERS = {<span class="s">"authorization"</span>, <span class="s">"c
   <h3 style="margin-top:32px">17.7 · Multi-instance reaper (D25)</h3>
 <pre class="code"><span class="c"># services/langgraph_chat/reaper.py</span>
 
-<span class="k">async def</span> <span class="f">run_reaper</span>(pool):
+REAPER_POLL_INTERVAL_S: int = <span class="n">30</span>   <span class="c"># seconds between reaper batches</span>
+REAPER_BATCH_LIMIT: int = <span class="n">100</span>      <span class="c"># max sessions claimed per cycle</span>
+REAPER_MAX_CONCURRENT: int = <span class="n">10</span>    <span class="c"># max concurrent reaps per pod (D25)</span>
+
+
+<span class="k">async def</span> <span class="f">run_reaper</span>(pool: AsyncConnectionPool) -&gt; <span class="k">None</span>:
     <span class="k">while True</span>:
-        <span class="k">try</span>:
-            <span class="k">async with</span> pool.connection() <span class="k">as</span> conn:
-                <span class="k">async with</span> conn.transaction():
-                    rows = <span class="k">await</span> conn.execute(<span class="s">"""
-                        SELECT id FROM chat_agents_sessions
-                        WHERE inactivity_deadline &lt; now()
-                          AND ended_at IS NULL
-                        FOR UPDATE SKIP LOCKED
-                        LIMIT 100
-                    """</span>).fetchall()
-                    sem = asyncio.Semaphore(<span class="n">10</span>)
-                    <span class="k">async def</span> <span class="f">reap_one</span>(sid):
-                        <span class="k">async with</span> sem:
-                            <span class="k">await</span> reap_session(conn, sid)
-                    <span class="k">await</span> asyncio.gather(*[reap_one(r[<span class="s">"id"</span>]) <span class="k">for</span> r <span class="k">in</span> rows])
-        <span class="k">except</span> <span class="t">Exception</span> <span class="k">as</span> e:
-            log.exception(<span class="s">"reaper_loop_error: %s"</span>, e)
-        <span class="k">await</span> asyncio.sleep(<span class="n">30</span>)</pre>
+        rows = <span class="k">await</span> _claim_reapable_sessions(pool)
+        <span class="k">if</span> rows:
+            sem = asyncio.Semaphore(REAPER_MAX_CONCURRENT)
+            <span class="k">async def</span> <span class="f">reap_one</span>(sid: str):
+                <span class="k">async with</span> sem, pool.connection() <span class="k">as</span> own_conn:
+                    <span class="k">try</span>:
+                        <span class="k">await</span> reap_session(own_conn, sid)
+                    <span class="k">except</span> <span class="t">Exception</span>:
+                        log.exception(<span class="s">"reap_failed"</span>, session_id=sid)
+            <span class="k">await</span> asyncio.gather(*[reap_one(r[<span class="s">"id"</span>]) <span class="k">for</span> r <span class="k">in</span> rows])
+        <span class="k">await</span> asyncio.sleep(REAPER_POLL_INTERVAL_S)
+
+
+<span class="k">async def</span> <span class="f">_claim_reapable_sessions</span>(pool) -&gt; list[dict]:
+    <span class="k">async with</span> pool.connection() <span class="k">as</span> conn:
+        <span class="k">async with</span> conn.transaction():
+            rows = <span class="k">await</span> conn.execute(<span class="s">"""
+                SELECT id FROM chat_agent_sessions
+                WHERE inactivity_deadline &lt; now() AND ended_at IS NULL
+                FOR UPDATE SKIP LOCKED
+                LIMIT %s
+            """</span>, (REAPER_BATCH_LIMIT,))
+            <span class="k">return await</span> rows.fetchall()</pre>
 
   <h3 style="margin-top:32px">17.8 · Idempotency-key insert with replay (D27)</h3>
-<pre class="code"><span class="k">async def</span> <span class="f">persist_inbound_message</span>(conn, session_id, msg, idempotency_key):
+<pre class="code"><span class="k">class</span> <span class="t">IdempotencyReplayError</span>(<span class="t">Exception</span>):
+    <span class="s">"""Raised when a duplicate idempotency_key is detected mid-INSERT (post-check race)."""</span>
+    <span class="k">def</span> <span class="f">__init__</span>(self, key: str):
+        self.key = key
+        <span class="k">super</span>().__init__(key)
+
+
+<span class="k">async def</span> <span class="f">persist_inbound_message</span>(conn, session_id, msg, idempotency_key):
     <span class="k">try</span>:
         <span class="k">await</span> conn.execute(
             <span class="s">"""
-            INSERT INTO chat_agents_messages
-              (id, chat_agents_session_id, direction, role, content,
+            INSERT INTO chat_agent_messages
+              (id, chat_agent_session_id, direction, role, content,
                idempotency_key, whatsapp_message_id, created_at)
             VALUES
               (gen_random_uuid(), %s, 'inbound', 'user', %s, %s, %s, now())
             """</span>,
             (session_id, msg.content, idempotency_key, idempotency_key),
         )
-    <span class="k">except</span> psycopg.errors.UniqueViolation:
-        <span class="c"># Gateway retry — already processed (D27 replay)</span>
-        <span class="k">pass</span></pre>
+    <span class="k">except</span> psycopg.errors.UniqueViolation <span class="k">as</span> exc:
+        <span class="k">raise</span> IdempotencyReplayError(idempotency_key) <span class="k">from</span> exc</pre>
 
   <h3 style="margin-top:32px">17.9 · <code class="inline">/support</code> route handler — structured dispatch (D37)</h3>
   <p>No parser. The handler reads <code class="inline">command</code> and <code class="inline">message</code> directly from JSON, performs validation per D37, and calls the matching <code class="inline">support_service</code> branch. The slash-command parser (<code class="inline">commands/parser.py</code>, <code class="inline">commands/types.py</code>) does not exist.</p>
@@ -2566,7 +2528,7 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
     idempotency_key: str
 
     <span class="k">@model_validator</span>(mode=<span class="s">"after"</span>)
-    <span class="k">def</span> <span class="f">_shape</span>(self):
+    <span class="k">def</span> <span class="f">_validate_command_message_pair</span>(self):
         <span class="c"># D37 validation</span>
         <span class="k">if</span> self.command <span class="k">in</span> (<span class="s">"whisper"</span>, <span class="s">"tell"</span>) <span class="k">and not</span> self.message:
             <span class="k">raise</span> <span class="t">ValueError</span>(<span class="s">"message_required_for_whisper_or_tell"</span>)
@@ -2606,7 +2568,52 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
 
     <span class="c"># command is None and message is non-null (D37 plain operator message).</span>
     <span class="k">return await</span> support_service.handle_plain_message(ctx, body.message)</pre>
-  <p style="margin-top:8px"><code class="inline">support_service.handle_takeover</code> returns <code class="inline">{"state": "no_change"}</code> (HTTP 200) when <code class="inline">mode == "takeover"</code> already; otherwise runs the CAS path. <code class="inline">handle_end</code> raises <code class="inline">ConflictError</code> (mapped to 409) when the caller is not the holder or <code class="inline">mode != "takeover"</code>. All branches emit a <code class="inline">support_command_received</code> (or <code class="inline">support_message_received</code> for plain message) row to <code class="inline">chat_agents_events</code> and the matching frame on the support-stream WS.</p>
+  <p style="margin-top:8px"><code class="inline">support_service.handle_takeover</code> returns <code class="inline">{"state": "no_change"}</code> (HTTP 200) when <code class="inline">mode == "takeover"</code> already; otherwise runs the CAS path. <code class="inline">handle_end</code> raises <code class="inline">ConflictError</code> (mapped to 409) when the caller is not the holder or <code class="inline">mode != "takeover"</code>. All branches emit a <code class="inline">support_command_received</code> (or <code class="inline">support_message_received</code> for plain message) row to <code class="inline">chat_agent_events</code> and the matching frame on the support-stream WS.</p>
+
+  <h3 style="margin-top:32px">17.10 · <code class="inline">agent_config_service</code> — self-invalidating 2-step read (D41)</h3>
+<pre class="code"><span class="c"># services/langgraph_chat/agent_config_service.py</span>
+
+CACHE_KEY = <span class="s">"chat_agent_config:{account_id}:{agent_id}:{cfg_version}"</span>
+TTL_SECONDS = <span class="n">300</span>  <span class="c"># 5 minutes</span>
+
+
+<span class="k">async def</span> <span class="f">fetch_chat_agent_config</span>(
+    conn, redis, *, account_id: str, agent_id: str
+) -&gt; dict:
+    <span class="s">"""Return the active agent-config dict for (account_id, agent_id).
+
+    Self-invalidating: cache key is keyed by `updated_at` epoch, so admin updates
+    naturally orphan stale entries (which then TTL out).
+    """</span>
+    <span class="c"># Step 1: cheap, indexed read — id + updated_at only.</span>
+    row = <span class="k">await</span> conn.execute(
+        <span class="s">"""
+        SELECT id, EXTRACT(EPOCH FROM updated_at)::bigint AS cfg_version
+          FROM chat_agents
+         WHERE account_id = %s AND agent_id = %s AND status = 'active'
+        """</span>,
+        (account_id, agent_id),
+    ).fetchone()
+    <span class="k">if not</span> row:
+        <span class="k">raise</span> <span class="t">ValueError</span>(<span class="s">"chat_agent_inactive_or_missing"</span>)
+
+    key = CACHE_KEY.format(
+        account_id=account_id, agent_id=agent_id, cfg_version=row[<span class="s">"cfg_version"</span>]
+    )
+
+    <span class="c"># Step 2: Redis lookup.</span>
+    cached = <span class="k">await</span> redis.get(key)
+    <span class="k">if</span> cached <span class="k">is not None</span>:
+        <span class="k">return</span> json.loads(cached)
+
+    <span class="c"># Step 3: cache miss — full SELECT, populate, return.</span>
+    full = <span class="k">await</span> conn.execute(
+        <span class="s">"SELECT * FROM chat_agents WHERE id = %s"</span>, (row[<span class="s">"id"</span>],),
+    ).fetchone()
+    cfg = _row_to_config_dict(full)
+    <span class="k">await</span> redis.set(key, json.dumps(cfg), ex=TTL_SECONDS)
+    <span class="k">return</span> cfg</pre>
+  <p style="margin-top:8px">Old keys with stale <code class="inline">cfg_version</code> sit in Redis until their TTL expires; they are never read again because every subsequent <code class="inline">fetch_chat_agent_config</code> call constructs a key with the new <code class="inline">updated_at</code>. No invalidate API; no Rails→Python coupling.</p>
 </section>
 
 <!-- ============ FAILURE MODES ============ -->
@@ -2627,7 +2634,7 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
       <tr><td class="desc">Operator typing during in-flight AI turn</td><td class="desc"><code class="inline">turn_done</code> event</td><td class="desc">Operator command waits for event OUTSIDE the lock, then acquires the lock; no deadlock</td></tr>
       <tr><td class="desc">Single pod crash mid-turn</td><td class="desc">Pod loss; checkpoint half-written</td><td class="desc">Reconcile-on-boot rebuilds DB row from checkpoint; in-flight inbound is replayed via gateway retry + idempotency</td></tr>
       <tr><td class="desc">Multi-pod reaper double-firing</td><td class="desc">Without coordination, would fire twice</td><td class="desc">DB-backed deadline + <code class="inline">FOR UPDATE SKIP LOCKED</code> ensures only one pod handles each session</td></tr>
-      <tr><td class="desc">Stale config in Redis after admin update</td><td class="desc">TTL would miss for up to 5 min</td><td class="desc">Rails admin calls invalidate-config endpoint; cache key includes <code class="inline">cfg_version</code> as defense-in-depth</td></tr>
+      <tr><td class="desc">Stale config in Redis after admin update</td><td class="desc">Cache miss never happens for the new <code class="inline">updated_at</code></td><td class="desc">Self-invalidating via <code class="inline">cfg_version</code> key + 2-step read (D41); no manual invalidation needed; old keys TTL out at 5 min</td></tr>
       <tr><td class="desc">WS token forgery</td><td class="desc">Bad signature</td><td class="desc">Python rejects connection on handshake (D4)</td></tr>
       <tr><td class="desc">Cross-tenant query</td><td class="desc">Body-supplied <code class="inline">account_id</code></td><td class="desc">Auth header is the source of truth (D9); body field is ignored</td></tr>
     </tbody>
@@ -2646,7 +2653,7 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
         <span class="pill pill--green">v1</span>
         <span class="pill">in scope · this spec</span>
       </div>
-      <h3 style="margin-top:6px">WhatsApp + HITL + ChatLogs page</h3>
+      <h3 style="margin-top:6px">WhatsApp + HITL + Chat-Agent Playground (D40)</h3>
       <ul class="checks" style="font-size:14px; margin-top:14px">
         <li><code class="inline">single_prompt</code> &amp; <code class="inline">multi_prompt</code> agents — same JSONB voice uses.</li>
         <li>Reuse RAG, memory, accounts, Redis, <code class="inline">llm_provider_templates</code> exactly as voice does.</li>
@@ -2657,7 +2664,7 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
         <li>Graph: <code class="inline">START → router → (ai_agent ⇄ tools | human_gate) → END</code> with operator-triggered <code class="inline">interrupt()</code>.</li>
         <li>Multi-instance reaper (D25), reconcile-on-boot (D6).</li>
         <li>One HTTP per inbound · 60s graph timeout · idempotency replay (D27).</li>
-        <li><code class="inline">ChatLogs.tsx</code> SPA page · operator console + user-preview panel · polling fallback.</li>
+        <li>Our SPA: chat-agent playground (<code class="inline">ChatAgentPlayground.tsx</code> + <code class="inline">UserPanel</code>/<code class="inline">SupportPanel</code>/<code class="inline">CommandInput</code>) mirroring the voice-agent playground (D40). End-customer production operator UI is the customer's own frontend.</li>
         <li><code class="inline">request_human_help</code> POSTs to <code class="inline">HELP_REQUEST_NOTIFY_URL</code> (D26).</li>
       </ul>
     </div>
@@ -2716,8 +2723,9 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
       <h2>Where each change lives.</h2>
       <p class="lead">
         Three repositories. Rails owns DDL + admin + proxy. Python owns the LangGraph
-        runtime, services, routes. Frontend owns the new ChatLogs page. Phase numbers
-        match §13.
+        runtime, services, routes. Frontend ships a chat-agent playground that mirrors the
+        voice-agent playground (D40); the end-customer's own support frontend owns the
+        production operator UX. Phase numbers match §13.
       </p>
     </div>
   </div>
@@ -2727,9 +2735,9 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
       <h4>Rails — osvi-platform-backend</h4>
       <div class="row-file"><span class="path">db/migrate/20260509000001_add_chat_agents_enabled_to_accounts.rb</span><span class="role">Phase 1 · D30</span></div>
       <div class="row-file"><span class="path">db/migrate/20260509000002_create_chat_agents.rb</span><span class="role">Phase 1</span></div>
-      <div class="row-file"><span class="path">db/migrate/20260509000003_create_chat_agents_sessions.rb</span><span class="role">Phase 1 · D20</span></div>
-      <div class="row-file"><span class="path">db/migrate/20260509000004_create_chat_agents_messages.rb</span><span class="role">Phase 1 · D27</span></div>
-      <div class="row-file"><span class="path">db/migrate/20260509000005_create_chat_agents_events.rb</span><span class="role">Phase 1</span></div>
+      <div class="row-file"><span class="path">db/migrate/20260509000003_create_chat_agent_sessions.rb</span><span class="role">Phase 1 · D20</span></div>
+      <div class="row-file"><span class="path">db/migrate/20260509000004_create_chat_agent_messages.rb</span><span class="role">Phase 1 · D27</span></div>
+      <div class="row-file"><span class="path">db/migrate/20260509000005_create_chat_agent_events.rb</span><span class="role">Phase 1</span></div>
       <div class="row-file"><span class="path">db/migrate/20260509000006_create_langgraph_checkpoint_tables.rb</span><span class="role">Phase 1 · D33 (3.0.5)</span></div>
       <div class="row-file"><span class="path">app/models/chat_agent.rb (+3 siblings)</span><span class="role">Phase 1</span></div>
       <div class="row-file"><span class="path">app/controllers/admin/chat_agents_controller.rb</span><span class="role">Phase 1 · admin CRUD</span></div>
@@ -2745,8 +2753,7 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
       <h4>Python — osvi-agentic-platform</h4>
       <div class="row-file"><span class="path">database/async_config.py</span><span class="role">Phase 2</span></div>
       <div class="row-file"><span class="path">database/model/chat_agent.py (+3 siblings)</span><span class="role">Phase 2 · D32 'meta'</span></div>
-      <div class="row-file"><span class="path">services/langgraph_chat/agent_config_service.py</span><span class="role">Phase 3 · cfg_version cache</span></div>
-      <div class="row-file"><span class="path">routes/chat_agents_internal.py</span><span class="role">Phase 3 · invalidate-config</span></div>
+      <div class="row-file"><span class="path">services/langgraph_chat/agent_config_service.py</span><span class="role">Phase 3 · self-invalidating cfg_version cache (D41)</span></div>
       <div class="row-file"><span class="path">requirements.txt</span><span class="role">Phase 4 · ==3.0.5 exact</span></div>
       <div class="row-file"><span class="path">services/langgraph_chat/checkpointer.py</span><span class="role">Phase 4 · no setup()</span></div>
       <div class="row-file"><span class="path">services/langgraph_chat/{state,prompts,nodes,graph}.py</span><span class="role">Phase 5</span></div>
@@ -2754,8 +2761,8 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
       <div class="row-file"><span class="path">services/langgraph_chat/tools/*.py</span><span class="role">Phase 6 · SSRF</span></div>
       <div class="row-file"><span class="path">services/provider_helper_service.py</span><span class="role">Phase 6 · extend (D10)</span></div>
       <div class="row-file"><span class="path">services/notifications/help_requested_channel.py</span><span class="role">Phase 7 · NEW</span></div>
-      <div class="row-file"><span class="path">services/langgraph_chat/{lock,conversation,support}_service.py</span><span class="role">Phase 8</span></div>
-      <div class="row-file"><span class="path">services/langgraph_chat/reply_service.py</span><span class="role">Phase 9</span></div>
+      <div class="row-file"><span class="path">services/langgraph_chat/{lock,conversation,support,mirror}_service.py</span><span class="role">Phase 8 · mirror_service shared by reply_service (S5)</span></div>
+      <div class="row-file"><span class="path">services/langgraph_chat/reply_service.py</span><span class="role">Phase 9 · delegates mirror writes to mirror_service</span></div>
       <div class="row-file"><span class="path">routes/chat_agents.py</span><span class="role">Phase 10 · vertical slice</span></div>
       <div class="row-file"><span class="path">routes/support.py</span><span class="role">Phase 10 · sole operator write rail (D37)</span></div>
       <div class="row-file"><span class="path">routes/ws.py</span><span class="role">Phase 10 · user-stream + support-stream + scoped ws-token (D35/D36/D38)</span></div>
@@ -2768,20 +2775,12 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
 
     <div class="stack">
       <h4>Frontend — osvi-platform-frontend</h4>
-      <div class="row-file"><span class="path">src/pages/ChatLogs.tsx</span><span class="role">Phase 13 · mirrors Conversations</span></div>
-      <div class="row-file"><span class="path">src/hooks/useChatLogsApi.ts</span><span class="role">Phase 13</span></div>
-      <div class="row-file"><span class="path">src/hooks/useSupportStreamWs.ts</span><span class="role">Phase 13 · scope=support (D36)</span></div>
-      <div class="row-file"><span class="path">src/hooks/useUserStreamWs.ts</span><span class="role">Phase 13 · scope=user (D35)</span></div>
-      <div class="row-file"><span class="path">src/components/ChatDetailPanel.tsx</span><span class="role">Phase 13 · operator console</span></div>
-      <div class="row-file"><span class="path">src/components/ChatMessageList.tsx</span><span class="role">Phase 13</span></div>
-      <div class="row-file"><span class="path">src/components/UserPreviewPanel.tsx</span><span class="role">Phase 13 · WhatsApp-eye view (D35)</span></div>
-      <div class="row-file"><span class="path">src/components/CommandInput.tsx</span><span class="role">Phase 13 · picker + textarea (no parser, D37)</span></div>
-      <div class="row-file"><span class="path">src/components/ChatSessionStateBadges.tsx</span><span class="role">Phase 13</span></div>
-      <div class="row-file"><span class="path">src/components/ChatLogsFilters.tsx</span><span class="role">Phase 13</span></div>
-      <div class="row-file"><span class="path">src/lib/wsToken.ts</span><span class="role">Phase 13 · scoped (D38)</span></div>
-      <div class="row-file"><span class="path">src/types/chatAgents.ts</span><span class="role">Phase 13</span></div>
-      <div class="row-file"><span class="path">src/App.tsx</span><span class="role">Phase 13 · routes</span></div>
-      <div class="row-file"><span class="path">src/components/Sidebar.tsx</span><span class="role">Phase 13 · nav entry</span></div>
+      <div class="row-file"><span class="path">src/pages/playground/ChatAgentPlayground.tsx</span><span class="role">Phase 13 · mirrors voice-agent playground (D40)</span></div>
+      <div class="row-file"><span class="path">src/components/chat/UserPanel.tsx</span><span class="role">Phase 13 · user-stream view</span></div>
+      <div class="row-file"><span class="path">src/components/chat/SupportPanel.tsx</span><span class="role">Phase 13 · support-stream view + CommandInput</span></div>
+      <div class="row-file"><span class="path">src/components/chat/CommandInput.tsx</span><span class="role">Phase 13 · whisper / tell / takeover / end / close / send-plain (D37)</span></div>
+      <div class="row-file"><span class="path">src/hooks/useSessionStreamWs.ts</span><span class="role">Phase 13 · base hook</span></div>
+      <div class="row-file"><span class="path">src/lib/wsToken.ts</span><span class="role">Phase 13 · scoped, fetches token from Rails (D38)</span></div>
     </div>
   </div>
 </section>
@@ -2826,7 +2825,7 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
         <h4>Repos</h4>
         <p class="src">osvi-agentic-platform (Python · chat svc + voice)<br>
         osvi-platform-backend (Rails · owns DDL + public API)<br>
-        osvi-platform-frontend (React 19 + Vite 7 · ChatLogs page)<br>
+        osvi-platform-frontend (React 19 + Vite 7 · chat-agent playground, D40)<br>
         osvi-support-hitl (POC reference)</p>
       </div>
       <div>
@@ -2877,8 +2876,3 @@ Command = Literal[<span class="s">"whisper"</span>, <span class="s">"tell"</span
 </script>
 </body>
 </html>
-
-
-
-
-
