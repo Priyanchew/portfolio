@@ -3,7 +3,7 @@
 import BlurFade from "@/components/magicui/blur-fade";
 import { ChevronRight, FileText, Lock } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 const AUTH_KEY = "osvi_auth";
 const AUTH_VALUE = "authenticated_v1";
@@ -19,20 +19,24 @@ const PUBLIC_DOCS: Array<{
 
 const BLUR_FADE_DELAY = 0.04;
 
+function subscribeAuth() {
+  return () => undefined;
+}
+
+function getOsviAuthSnapshot() {
+  try {
+    return localStorage.getItem(AUTH_KEY) === AUTH_VALUE;
+  } catch {
+    return false;
+  }
+}
+
 export default function DocsClient() {
-  const [mounted, setMounted] = useState(false);
-  const [hasOsviAuth, setHasOsviAuth] = useState(false);
-
-  useEffect(() => {
-    try {
-      setHasOsviAuth(localStorage.getItem(AUTH_KEY) === AUTH_VALUE);
-    } catch {
-      /* ignore */
-    }
-    setMounted(true);
-  }, []);
-
-  const showOsvi = mounted && hasOsviAuth;
+  const showOsvi = useSyncExternalStore(
+    subscribeAuth,
+    getOsviAuthSnapshot,
+    () => false
+  );
   const totalCount = PUBLIC_DOCS.length + (showOsvi ? 1 : 0);
   const isEmpty = PUBLIC_DOCS.length === 0 && !showOsvi;
 
