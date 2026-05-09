@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getOsviDocs } from "./get-osvi-docs";
 import OsviClient from "./osvi-client";
 
 export const metadata: Metadata = {
@@ -8,5 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default function OsviPage() {
-  return <OsviClient />;
+  const docs = getOsviDocs();
+  return <OsviClient docs={docs} />;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import BlurFade from "@/components/magicui/blur-fade";
+import type { OsviDocEntry } from "./get-osvi-docs";
 import { ChevronLeft, ChevronRight, FileText, Lock, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -15,15 +16,6 @@ const SECRET_HASH =
 const AUTH_KEY = "osvi_auth";
 const AUTH_VALUE = "authenticated_v1";
 
-const OSVI_DOCS = [
-  {
-    title: "Chat Agent v1",
-    href: "/docs/osvi/chat-agent-v1.html",
-    description:
-      "Spec, schema & implementation plan for the chat agent prototype.",
-  },
-];
-
 const BLUR_FADE_DELAY = 0.04;
 
 async function sha256Hex(input: string): Promise<string> {
@@ -36,7 +28,11 @@ async function sha256Hex(input: string): Promise<string> {
 
 type AuthState = "checking" | "locked" | "unlocked";
 
-export default function OsviClient() {
+type OsviClientProps = {
+  docs: readonly OsviDocEntry[];
+};
+
+export default function OsviClient({ docs }: OsviClientProps) {
   const [authState, setAuthState] = useState<AuthState>("checking");
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -156,8 +152,7 @@ export default function OsviClient() {
           <h1 className="text-2xl font-semibold tracking-tight">
             OSVI{" "}
             <span className="ml-1 bg-card border border-border rounded-md px-2 py-1 text-muted-foreground text-sm">
-              {OSVI_DOCS.length}{" "}
-              {OSVI_DOCS.length === 1 ? "doc" : "docs"}
+              {docs.length} {docs.length === 1 ? "doc" : "docs"}
             </span>
           </h1>
           <button
@@ -170,13 +165,48 @@ export default function OsviClient() {
           </button>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          Internal docs and write-ups for the OSVI internship.
+          Internal docs and write-ups for the OSVI internship. Drop any{" "}
+          <code className="text-xs rounded bg-muted px-1 py-0.5">.html</code>{" "}
+          file in{" "}
+          <code className="text-xs rounded bg-muted px-1 py-0.5">
+            public/docs/osvi/
+          </code>{" "}
+          — it appears here after deploy. Without{" "}
+          <code className="text-xs rounded bg-muted px-1 py-0.5">
+            osvi-doc-title
+          </code>{" "}
+          /{" "}
+          <code className="text-xs rounded bg-muted px-1 py-0.5">
+            osvi-doc-description
+          </code>
+          , the list uses your{" "}
+          <code className="text-xs rounded bg-muted px-1 py-0.5">
+            &lt;title&gt;
+          </code>{" "}
+          only. With those metas, the subtitle can also use{" "}
+          <code className="text-xs rounded bg-muted px-1 py-0.5">
+            osvi-doc-description
+          </code>{" "}
+          or{" "}
+          <code className="text-xs rounded bg-muted px-1 py-0.5">
+            meta description
+          </code>
+          .
         </p>
       </BlurFade>
 
       <BlurFade delay={BLUR_FADE_DELAY * 2}>
         <div className="flex flex-col gap-2">
-          {OSVI_DOCS.map((doc) => (
+          {docs.length === 0 && (
+            <p className="text-sm text-muted-foreground border border-dashed border-border rounded-xl p-6 text-center">
+              No HTML files in{" "}
+              <code className="text-xs rounded bg-muted px-1 py-0.5">
+                public/docs/osvi/
+              </code>
+              . Add one and redeploy.
+            </p>
+          )}
+          {docs.map((doc) => (
             <a
               key={doc.href}
               href={doc.href}
@@ -189,9 +219,11 @@ export default function OsviClient() {
                 <span className="font-medium group-hover:text-foreground transition-colors">
                   {doc.title}
                 </span>
-                <span className="text-xs text-muted-foreground">
-                  {doc.description}
-                </span>
+                {doc.description ? (
+                  <span className="text-xs text-muted-foreground">
+                    {doc.description}
+                  </span>
+                ) : null}
               </div>
               <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
             </a>
