@@ -15,6 +15,7 @@ const SECRET_HASH =
 
 const AUTH_KEY = "osvi_auth";
 const AUTH_VALUE = "authenticated_v1";
+const DOC_SESSION_KEY = "osvi_doc_key";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -69,6 +70,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
       const hash = await sha256Hex(input.trim());
       if (hash === SECRET_HASH) {
         localStorage.setItem(AUTH_KEY, AUTH_VALUE);
+        sessionStorage.setItem(DOC_SESSION_KEY, input.trim());
         setAuthState("unlocked");
         setInput("");
       } else {
@@ -84,6 +86,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
   function handleSignOut() {
     try {
       localStorage.removeItem(AUTH_KEY);
+      sessionStorage.removeItem(DOC_SESSION_KEY);
     } catch {
       /* ignore */
     }
@@ -165,33 +168,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
           </button>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          Internal docs and write-ups for the OSVI internship. Drop any{" "}
-          <code className="text-xs rounded bg-muted px-1 py-0.5">.html</code>{" "}
-          file in{" "}
-          <code className="text-xs rounded bg-muted px-1 py-0.5">
-            public/docs/osvi/
-          </code>{" "}
-          — it appears here after deploy. Without{" "}
-          <code className="text-xs rounded bg-muted px-1 py-0.5">
-            osvi-doc-title
-          </code>{" "}
-          /{" "}
-          <code className="text-xs rounded bg-muted px-1 py-0.5">
-            osvi-doc-description
-          </code>
-          , the list uses your{" "}
-          <code className="text-xs rounded bg-muted px-1 py-0.5">
-            &lt;title&gt;
-          </code>{" "}
-          only. With those metas, the subtitle can also use{" "}
-          <code className="text-xs rounded bg-muted px-1 py-0.5">
-            osvi-doc-description
-          </code>{" "}
-          or{" "}
-          <code className="text-xs rounded bg-muted px-1 py-0.5">
-            meta description
-          </code>
-          .
+          Internal docs and write-ups for the OSVI internship.
         </p>
       </BlurFade>
 
@@ -199,19 +176,13 @@ export default function OsviClient({ docs }: OsviClientProps) {
         <div className="flex flex-col gap-2">
           {docs.length === 0 && (
             <p className="text-sm text-muted-foreground border border-dashed border-border rounded-xl p-6 text-center">
-              No HTML files in{" "}
-              <code className="text-xs rounded bg-muted px-1 py-0.5">
-                public/docs/osvi/
-              </code>
-              . Add one and redeploy.
+              No OSVI docs are available yet.
             </p>
           )}
           {docs.map((doc) => (
             <a
               key={doc.href}
               href={doc.href}
-              target="_blank"
-              rel="noopener noreferrer"
               className="group flex items-start gap-3 border border-border rounded-xl p-4 hover:bg-accent/40 transition-colors"
             >
               <FileText className="size-4 mt-0.5 text-muted-foreground shrink-0" />

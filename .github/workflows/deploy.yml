@@ -57,6 +57,9 @@ jobs:
         env:
           # Surfaced to next.config.mjs if you ever need a basePath.
           NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'https://priyanchew.dev' }}
+          # Required by scripts/protect-osvi-docs.mjs to encrypt OSVI HTML files
+          # before the GitHub Pages artifact is uploaded.
+          OSVI_DOCS_ACCESS_KEY: ${{ secrets.OSVI_DOCS_ACCESS_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
