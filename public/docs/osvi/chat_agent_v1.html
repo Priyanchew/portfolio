@@ -3,9 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<!-- Listing on /docs/osvi — optional short card text (falls back to <title> / meta description). -->
-<meta name="osvi-doc-title" content="Chat Agent v1" />
-<meta name="osvi-doc-description" content="Spec, schema &amp; implementation plan for the chat agent prototype." />
 <title>OSVI Chat Agent v1 — Final Spec, Schema &amp; Implementation Plan (2026-05-09)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -689,8 +686,13 @@
     <div><span class="lbl">Module path</span><span class="val">services/langgraph_chat/</span></div>
     <div><span class="lbl">Route prefix</span><span class="val">/chat-agents/*</span></div>
     <div><span class="lbl">Live updates</span><span class="val">REST poll + WS direct (signed token)</span></div>
-    <div><span class="lbl">account_id</span><span class="val">UUID end-to-end</span></div>
+    <div><span class="lbl">account_id</span><span class="val">BIGINT end-to-end</span></div>
     <div><span class="lbl">LangGraph pin</span><span class="val">==3.0.5 (exact)</span></div>
+  </div>
+
+  <div class="callout callout--info" style="margin-top:14px">
+    <span class="label">Implementation progress · 2026-05-11</span>
+    <p style="margin:0">Rails migrations submitted as PR <a href="https://github.com/OSVI-AI/osvi-platform-backend/pull/326">#326</a> targeting <code class="inline">stage</code> — six files: <code class="inline">chat_agents</code>, <code class="inline">chat_agent_sessions</code>, <code class="inline">chat_agent_messages</code>, <code class="inline">chat_agent_events</code>, <code class="inline">accounts.chat_agents_enabled</code> flag, plus the four LangGraph checkpoint tables with the <code class="inline">(0)..(10)</code> version stamp. Awaiting supervisor review. Models, controllers, routes, and Phase 2 onward (Python, frontend) are queued behind that review.</p>
   </div>
 
   <div class="row row--3" style="margin-top:8px">
@@ -722,7 +724,7 @@
       <ul class="dashes" style="margin-top:8px; font-size:14px">
         <li>Rails owns <strong>all</strong> migrations including the 4 LangGraph checkpoint tables.</li>
         <li>Python <strong>never</strong> calls <code class="inline">AsyncPostgresSaver.setup()</code>; CI guard diffs schema (D33).</li>
-        <li><code class="inline">account_id</code> is <strong>UUID</strong> end-to-end (D8). Any prior <code class="inline">BIGINT</code> reference is wrong.</li>
+        <li><code class="inline">account_id</code> is <strong>BIGINT</strong> end-to-end (D8) — Rails <code class="inline">accounts.id</code> uses the default Rails bigserial PK. Any prior <code class="inline">UUID</code> reference is wrong.</li>
         <li>Existing <code class="inline">routes/chat.py</code> (LiveKit AgentSession) is untouched (D5).</li>
         <li>WhatsApp Cloud API itself is the gateway's problem — not ours.</li>
       </ul>
@@ -739,7 +741,7 @@
       <p class="lead">
         End-users WhatsApp the customer's business number. A customer-chosen WhatsApp
         gateway (Periscope/Wati) handles WhatsApp Cloud API and POSTs normalized payloads
-        to Rails. Rails verifies, resolves <code class="inline">account_id</code> (UUID) and
+        to Rails. Rails verifies, resolves <code class="inline">account_id</code> (BIGINT) and
         proxies to Python over HMAC-SHA256. Python acquires an advisory lock, runs one
         LangGraph turn (60s hard timeout), persists mirror rows in a separate transaction,
         and returns the reply. Operators issue commands through Rails to <code class="inline">POST /sessions/:id/support</code> with a structured <code class="inline">{command, message, idempotency_key}</code> body (D37) — no slash-prefix parsing.
@@ -827,7 +829,7 @@
       <!-- Rails → Python (HMAC) -->
       <path d="M 380 420 L 380 480" stroke="#2d5d3e" stroke-width="2" fill="none" marker-end="url(#arrA)"/>
       <text x="392" y="448" font-family="JetBrains Mono, monospace" font-size="11" fill="#2d5d3e">HMAC-SHA256 · X-Service-Auth</text>
-      <text x="392" y="464" font-family="JetBrains Mono, monospace" font-size="11" fill="#2d5d3e">+ X-Service-Account-Id (UUID)</text>
+      <text x="392" y="464" font-family="JetBrains Mono, monospace" font-size="11" fill="#2d5d3e">+ X-Service-Account-Id (BIGINT)</text>
 
       <!-- WS direct from SPA → Python (signed token) -->
       <path d="M 900 210 C 900 230, 1080 240, 1080 480" stroke="#1f3a55" stroke-width="1.6" stroke-dasharray="6 3" fill="none" marker-end="url(#arrD)"/>
@@ -852,7 +854,7 @@
         <text x="60" y="718" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.16em" fill="#3d2255">STORAGE · TIER 3</text>
         <text x="60" y="746" font-family="Instrument Serif, serif" font-size="22" fill="#3d2255">PostgreSQL</text>
         <line x1="60" y1="758" x2="560" y2="758" stroke="#5a3382" stroke-opacity="0.25"/>
-        <text x="60" y="778" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a6f5d">accounts (UUID id, +chat_agents_enabled)</text>
+        <text x="60" y="778" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a6f5d">accounts (BIGINT id, +chat_agents_enabled)</text>
         <text x="60" y="796" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">chat_agents · ..._sessions · ..._messages · ..._events</text>
         <text x="60" y="814" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">checkpoints · checkpoint_blobs · checkpoint_writes · checkpoint_migrations</text>
         <text x="60" y="836" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#3d2255">Rails-owned DDL · Python read+write at runtime · reconcile-on-boot</text>
@@ -864,7 +866,7 @@
         <text x="640" y="746" font-family="Instrument Serif, serif" font-size="22" fill="#5a4515">Redis</text>
         <line x1="640" y1="758" x2="880" y2="758" stroke="#8a6f1f" stroke-opacity="0.25"/>
         <text x="640" y="780" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">chat_agent_config:</text>
-        <text x="640" y="796" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">  &lt;UUID account_id&gt;:&lt;agent_id&gt;:&lt;cfg_version&gt;</text>
+        <text x="640" y="796" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">  &lt;BIGINT account_id&gt;:&lt;agent_id&gt;:&lt;cfg_version&gt;</text>
         <text x="640" y="816" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#5a6f5d">5-min TTL · self-invalidating (D41)</text>
       </g>
 
@@ -925,7 +927,7 @@
       <tr><td class="col">chat_agent_sessions</td><td class="desc">migration</td><td class="desc">read &amp; write (mode, help_requested, mirror, inactivity_deadline, token_total, ended_at)</td></tr>
       <tr><td class="col">chat_agent_messages</td><td class="desc">migration</td><td class="desc">read &amp; write · idempotency_key UNIQUE (D27)</td></tr>
       <tr><td class="col">chat_agent_events</td><td class="desc">migration</td><td class="desc">append-only audit · errors</td></tr>
-      <tr><td class="col">checkpoints / blobs / writes / migrations</td><td class="desc">migration · seeds checkpoint_migrations (1..5)</td><td class="desc">read &amp; write via <code class="inline">AsyncPostgresSaver</code> · <strong>never</strong> <code class="inline">.setup()</code> (D33)</td></tr>
+      <tr><td class="col">checkpoints / blobs / writes / migrations</td><td class="desc">migration · seeds checkpoint_migrations (0..10) · folds v4 + v9 inline</td><td class="desc">read &amp; write via <code class="inline">AsyncPostgresSaver</code> · <strong>never</strong> <code class="inline">.setup()</code> (D33)</td></tr>
     </tbody>
   </table>
 
@@ -936,14 +938,14 @@
 1. Gateway → Rails               2. Rails → Python                 3. Python (one turn)
    POST /chat-agents/inbound        POST /chat-agents/inbound          a. acquire pg adv lock
    {                                HMAC SHA256 over                       on hashtext(session_id)
-     account_id (UUID),             "{ts}:{account_id}:                b. idempotency check on
+     account_id (BIGINT),           "{ts}:{account_id}:                b. idempotency check on
      agent_id, business_phone_id,    {operator_email}:                    chat_agent_messages
      customer_id (= phone),          {operator_id}:                       (whatsapp_message_id)
      message_id, text, ts           {body_sha256}"                    c. fetch_chat_agent_config
    }                                Headers:                             (Redis-cached by
                                      X-Service-Auth                       account_id+agent_id+ver)
                                      X-Service-Timestamp               d. memory inject (optional,
-                                     X-Service-Account-Id (UUID)          via contact_profiles)
+                                     X-Service-Account-Id (BIGINT)        via contact_profiles)
                                      X-Operator-Email                  e. graph.ainvoke (60s
                                      X-Operator-Id                        hard timeout)
                                                                        f. mirror INSERT in a
@@ -982,7 +984,7 @@
     <div class="decision"><span class="id">D5</span><strong><code class="inline">routes/chat.py</code> (LiveKit AgentSession) is untouched.</strong> New chat agent lives at <code class="inline">/chat-agents/*</code> and coexists alongside the old <code class="inline">/chat/*</code> path.</div>
     <div class="decision"><span class="id">D6</span><strong>Two-table design stays.</strong> <code class="inline">AsyncPostgresSaver</code> writes canonical state; mirror tables hold operational state. <code class="inline">reconcile_on_boot</code> — graph wins.</div>
     <div class="decision"><span class="id">D7</span><strong>Mirror writes in separate txn.</strong> On failure, user still got the reply; <code class="inline">mirror_write_failed</code> event row written; reconcile-on-boot fixes.</div>
-    <div class="decision"><span class="id">D8</span><strong><code class="inline">account_id</code> is UUID end-to-end.</strong> Rails <code class="inline">Account.id</code> is UUID; every chat-agent table FKs UUID; mirror models use UUID; cache key uses UUID; HMAC payload + <code class="inline">X-Service-Account-Id</code> header are UUID strings. <em>All prior <code class="inline">BIGINT</code> references are wrong.</em></div>
+    <div class="decision"><span class="id">D8</span><strong><code class="inline">account_id</code> is BIGINT end-to-end.</strong> Rails <code class="inline">Account.id</code> uses the default bigserial PK (BIGINT); every chat-agent table FKs BIGINT; mirror models use <code class="inline">int</code>; cache key uses the integer; HMAC payload + <code class="inline">X-Service-Account-Id</code> header carry the integer serialized as string. <em>All prior <code class="inline">UUID</code> references are wrong — verified against the Rails schema on 2026-05-11.</em></div>
     <div class="decision"><span class="id">D9</span><strong>Tenant isolation, three layers.</strong> DB unique <code class="inline">(account_id, agent_id)</code>; cache key <code class="inline">chat_agent_config:{account_id}:{agent_id}:{cfg_version}</code>; every query carries the verified HMAC <code class="inline">account_id</code>.</div>
     <div class="decision"><span class="id">D10</span><strong>LLM config split.</strong> <code class="inline">llm_provider_template_id</code> (BigInt FK) + <code class="inline">llm_config</code> JSONB. Voice's <code class="inline">create_llm_for_chat()</code> stays voice-only; new <code class="inline">create_langchain_chat_llm(provider, llm_config)</code> returns a LangChain <code class="inline">BaseChatModel</code>.</div>
     <div class="decision"><span class="id">D11</span><strong><code class="inline">llm_provider_templates</code> already populated.</strong> Chat just FKs to existing rows. Zero seed work.</div>
@@ -999,7 +1001,7 @@
     <div class="decision"><span class="id">D22</span><strong>Per-turn advisory lock.</strong> Acquire → one turn → release. <code class="inline">pg_try_advisory_lock(hashtext(session_id))</code>. <code class="inline">turn_done</code> asyncio.Event awaited OUTSIDE the lock to avoid deadlock.</div>
     <div class="decision"><span class="id">D23</span><strong><code class="inline">/end</code> ≠ <code class="inline">/close</code>.</strong> <code class="inline">/end</code> releases takeover (operator-only, holder-only, resumes AI from <code class="inline">interrupt()</code>). <code class="inline">/close</code> archives session (any caller, any state, no graph touch, sets <code class="inline">ended_at</code>).</div>
     <div class="decision"><span class="id">D24</span><strong>Per-agent config in <code class="inline">chat_agents.config</code> JSONB.</strong> <code class="inline">takeover_auto_resume_seconds</code> (1800), <code class="inline">session_auto_close_hours</code> (24, hard-coded), <code class="inline">graph_turn_timeout_seconds</code> (60), <code class="inline">mirror_write_max_retries</code> (3, backoff 100/400/1600ms).</div>
-    <div class="decision"><span class="id">D25</span><strong>Multi-instance reaper, DB-backed.</strong> Column <code class="inline">chat_agent_sessions.inactivity_deadline timestamptz</code>. Reaper: <code class="inline">FOR UPDATE SKIP LOCKED LIMIT 100</code>, semaphore 10/pod. Replaces POC's per-process dict.</div>
+    <div class="decision"><span class="id">D25</span><strong>Multi-instance reaper, DB-backed.</strong> Column <code class="inline">chat_agent_sessions.inactivity_deadline timestamptz</code>. Reaper: <code class="inline">FOR UPDATE SKIP LOCKED LIMIT 100</code>, semaphore 10/pod. Replaces POC's per-process dict. The deadline is <strong>reset (pushed forward 24h)</strong> on every user-inbound message and every operator plain-message turn, so an active conversation never trips the reaper. Only true inactivity ages the deadline out.</div>
     <div class="decision"><span class="id">D26</span><strong>Slack notifications: only <code class="inline">request_human_help</code> in v1.</strong> User provides <code class="inline">HELP_REQUEST_NOTIFY_URL</code>. <code class="inline">HelpRequestedNotificationChannel</code> (separate from voice's <code class="inline">SlackNotificationChannel</code>). Other events (session_ended, takeover_*, errors) deferred to v1.1.</div>
     <div class="decision"><span class="id">D27</span><strong>Idempotency.</strong> <code class="inline">chat_agent_messages.idempotency_key</code>; UNIQUE partial index <code class="inline">(session_id, idempotency_key) WHERE direction='inbound' AND idempotency_key IS NOT NULL</code>. Replay returns cached reply without re-running the LLM. 7-day retention.</div>
     <div class="decision"><span class="id">D28</span><strong>Tool-loop hard stop.</strong> <code class="inline">recursion_limit=25</code>; per-turn budget <code class="inline">max_tool_calls_per_turn</code> default 8. Cap-exceeded routes to terminal <code class="inline">tool_budget_exceeded</code> node.</div>
@@ -1007,7 +1009,9 @@
     <div class="decision"><span class="id">D30</span><strong>Feature flag.</strong> <code class="inline">accounts.chat_agents_enabled boolean default false</code>. Rails routes 404 if flag is off. Python doesn't check.</div>
     <div class="decision"><span class="id">D31</span><strong>Token budgets — TODO.</strong> Not enforced in v1. Per-session counter <code class="inline">chat_agent_sessions.token_total bigint default 0</code> for visibility only. v1.1 adds caps.</div>
     <div class="decision"><span class="id">D32</span><strong>SQLAlchemy <code class="inline">metadata</code> reserved.</strong> Use <code class="inline">meta = Column("metadata", JSONB, ...)</code>. DB column name unchanged; only the Python attribute renames.</div>
-    <div class="decision"><span class="id">D33</span><strong>LangGraph pin: <code class="inline">langgraph-checkpoint-postgres==3.0.5</code> exact.</strong> CI runs <code class="inline">AsyncPostgresSaver.setup()</code> against disposable Postgres and diffs against Rails migrations; build fails on drift.</div>
+    <div class="decision"><span class="id">D33</span><strong>LangGraph pin: <code class="inline">langgraph-checkpoint-postgres==3.0.5</code> exact (no <code class="inline">~=</code>, <code class="inline">&gt;=</code>, or caret).</strong> CI runs <code class="inline">AsyncPostgresSaver.setup()</code> against disposable Postgres and diffs against Rails migrations; build fails on drift. <strong>Why exact-pin is load-bearing:</strong> the Rails migration mirrors the <em>end-state</em> of v3.0.5's <code class="inline">MIGRATIONS</code> list (11 statements, indices 0..10) with v4 (<code class="inline">DROP NOT NULL</code> on <code class="inline">checkpoint_blobs.blob</code>) and v9 (<code class="inline">ADD COLUMN task_path</code>) folded inline into the create-table statements, then seeds <code class="inline">checkpoint_migrations</code> with <code class="inline">(0)..(10)</code>. A patch bump can (a) append a v11+ migration that <code class="inline">setup()</code> runs against the CI DB but our Rails DB lacks, or (b) change column shape/default/order in any v0..v10 statement and diverge from our folded version. Either case fails the schema diff. Version bumps are a deliberate, multi-file ritual: re-extract the wheel, re-derive the migration, update the seed range, re-run the guard. <code class="inline">langgraph==1.1.10</code> is exact-pinned for the same reason (D34 workaround is version-specific).</div>
+    <div class="decision"><span class="id">D33a</span><strong>Postgres role lockdown for the Python runtime user.</strong> The DB role used by <code class="inline">osvi-agentic-platform</code> is granted <code class="inline">SELECT, INSERT, UPDATE, DELETE</code> on <code class="inline">checkpoints</code>, <code class="inline">checkpoint_blobs</code>, <code class="inline">checkpoint_writes</code>, <code class="inline">checkpoint_migrations</code> and the four mirror tables — and <strong>explicitly NOT</strong> <code class="inline">CREATE</code>, <code class="inline">ALTER</code>, <code class="inline">TRUNCATE</code>, <code class="inline">REFERENCES</code>, or any role-level DDL. Rails uses a separate migration role. Load-bearing guard: even an accidental <code class="inline">checkpointer.setup()</code> call fails immediately with <code class="inline">permission denied for table checkpoint_migrations</code>, instead of silently mutating schema.</div>
+    <div class="decision"><span class="id">D33b</span><strong>Startup schema-fingerprint assertion.</strong> <code class="inline">services/langgraph_chat/checkpointer.py</code> exposes <code class="inline">assert_checkpoint_schema_fingerprint(pool)</code>, called from FastAPI <code class="inline">lifespan</code> immediately after pool init and before <code class="inline">AsyncPostgresSaver</code> construction. Asserts <code class="inline">MAX(v) = 10</code> and <code class="inline">count(*) = 11</code> in <code class="inline">checkpoint_migrations</code>, and that all four checkpoint tables exist. Any failure aborts startup. Catches deploy-time mistakes the CI guard cannot see: wrong DB, missing Rails migration, partial rollback, hand-edited schema. Defense-in-depth on top of D33a.</div>
     <div class="decision"><span class="id">D34</span><strong><code class="inline">Command(resume=None)</code> workaround preserved.</strong> When there is no pending interrupt, pass <code class="inline">None</code> directly (NOT <code class="inline">Command(resume=None)</code>) to <code class="inline">graph.ainvoke</code>. POC ref: <code class="inline">osvi-support-hitl/backend/services/support_service.py:730–735</code>.</div>
     <div class="decision"><span class="id">D35</span><strong>User-stream WS scope.</strong> <code class="inline">WS /chat-agents/sessions/:id/user-stream</code> is read-only and emits ONLY message frames where <code class="inline">direction IN ('user','ai')</code>. No events. No operator messages — no whisper, no tell, no operator plain messages, no audit events. Auth via scope=<code class="inline">user</code> token (D38).</div>
     <div class="decision"><span class="id">D36</span><strong>Support-stream WS is read-only.</strong> <code class="inline">WS /chat-agents/sessions/:id/support-stream</code> projects state for the operator console: ALL message frames (user/ai/operator) and ALL audit events. The server accepts NO writes on this socket. All operator writes — commands AND plain messages — go through <code class="inline">POST /chat-agents/sessions/:id/support</code> (D37). Single write rail = no race between WS frames and REST POSTs.</div>
@@ -1106,7 +1110,7 @@
       <g>
         <rect x="640" y="40" width="240" height="110" rx="10" fill="#ebe6d3" stroke="#cbc7b7"/>
         <text x="660" y="68" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600" fill="#0d2419">contact_profiles</text>
-        <text x="660" y="88" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">(account_id UUID, customer_id) UQ</text>
+        <text x="660" y="88" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">(account_id BIGINT, customer_id) UQ</text>
         <text x="660" y="104" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">profile_data JSONB</text>
         <text x="660" y="140" font-family="Inter, sans-serif" font-size="10" font-style="italic" fill="#8a9a8d">existing · logical join · memory</text>
       </g>
@@ -1117,7 +1121,7 @@
         <text x="60" y="232" font-family="JetBrains Mono, monospace" font-size="15" font-weight="600" fill="#0d2419">chat_agents</text>
         <text x="60" y="252" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#1a3a2a">Agent definition · Rails admin owned · read-only at runtime</text>
         <line x1="60" y1="262" x2="560" y2="262" stroke="#2d5d3e" stroke-opacity="0.3"/>
-        <text x="60" y="282" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · account_id UUID FK (D8) · agent_id VARCHAR(64)</text>
+        <text x="60" y="282" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · account_id BIGINT FK (D8) · agent_id VARCHAR(64)</text>
         <text x="60" y="300" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">status (draft|active|disabled) · agent_type · system_prompt · initial_prompt</text>
         <text x="60" y="318" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">agent_config JSONB · memory_config JSONB · config JSONB</text>
         <text x="60" y="336" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a3382">llm_provider_template_id BIGINT FK (D10)</text>
@@ -1126,7 +1130,7 @@
       </g>
 
       <path d="M 160 150 L 160 200" stroke="#2d5d3e" stroke-width="1.3" fill="none" marker-end="url(#arrow)"/>
-      <text x="168" y="180" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">account_id (UUID)</text>
+      <text x="168" y="180" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">account_id (BIGINT)</text>
       <path d="M 460 150 L 460 200" stroke="#2d5d3e" stroke-width="1.3" fill="none" marker-end="url(#arrow)"/>
       <text x="468" y="180" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a6f5d">llm_provider_template_id</text>
 
@@ -1136,7 +1140,7 @@
         <text x="60" y="482" font-family="JetBrains Mono, monospace" font-size="15" font-weight="600" fill="#0d2419">chat_agent_sessions</text>
         <text x="60" y="502" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#1a3a2a">One row per conversation · id == LangGraph thread_id (UUID)</text>
         <line x1="60" y1="512" x2="560" y2="512" stroke="#2d5d3e" stroke-opacity="0.3"/>
-        <text x="60" y="532" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · chat_agent_id UUID FK · account_id UUID FK</text>
+        <text x="60" y="532" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · chat_agent_id UUID FK · account_id BIGINT FK</text>
         <text x="60" y="550" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">customer_id TEXT · business_phone_id TEXT · mode (ai|takeover)</text>
         <text x="60" y="568" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">active_human · help_requested · status · current_state</text>
         <text x="60" y="586" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">last_user_msg_at · last_support_msg_at · inactivity_deadline (D25)</text>
@@ -1172,7 +1176,7 @@
         <text x="340" y="772" font-family="Inter, sans-serif" font-size="11" font-style="italic" fill="#1a3a2a">Append-only audit + structured errors</text>
         <line x1="340" y1="782" x2="560" y2="782" stroke="#2d5d3e" stroke-opacity="0.3"/>
         <text x="340" y="800" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">id UUID PK · session_id FK (nullable)</text>
-        <text x="340" y="816" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">account_id UUID FK</text>
+        <text x="340" y="816" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">account_id BIGINT FK</text>
         <text x="340" y="832" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">kind · actor_kind · actor_email</text>
         <text x="340" y="848" font-family="JetBrains Mono, monospace" font-size="11" fill="#0d2419">payload JSONB · created_at</text>
         <text x="340" y="876" font-family="JetBrains Mono, monospace" font-size="9.5" letter-spacing="0.14em" fill="#2d5d3e">NEW · TABLE 4/4</text>
@@ -1257,7 +1261,7 @@
       <span class="pnum">1</span>
       <div style="flex:1">
         <div class="ptitle">chat_agents</div>
-        <div class="psub">Agent definition · UUID PK · UUID account_id (D8)</div>
+        <div class="psub">Agent definition · UUID PK · BIGINT account_id (D8)</div>
       </div>
       <span class="pmeta"><span class="pill pill--green">new</span></span>
       <span class="chev">▶</span>
@@ -1268,7 +1272,7 @@
         <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td class="col">id</td><td class="type">UUID</td><td class="desc">PK · <code class="inline">DEFAULT gen_random_uuid()</code></td></tr>
-          <tr><td class="col">account_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">accounts(id)</code> · <code class="inline">NOT NULL</code> · D8</td></tr>
+          <tr><td class="col">account_id</td><td class="type">BIGINT</td><td class="desc">FK <code class="inline">accounts(id)</code> · <code class="inline">NOT NULL</code> · D8</td></tr>
           <tr><td class="col">agent_id</td><td class="type">VARCHAR(64)</td><td class="desc">Public, customer-facing slug</td></tr>
           <tr><td class="col">name</td><td class="type">VARCHAR(255)</td><td class="desc">Human-friendly display name</td></tr>
           <tr><td class="col">description</td><td class="type">TEXT</td><td class="desc"><span class="nullable">nullable</span></td></tr>
@@ -1308,7 +1312,7 @@
         <tbody>
           <tr><td class="col">id</td><td class="type">UUID</td><td class="desc">PK · doubles as LangGraph <code class="inline">thread_id</code></td></tr>
           <tr><td class="col">chat_agent_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">chat_agents(id)</code></td></tr>
-          <tr><td class="col">account_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">accounts(id)</code> · denormalized for tenant filtering · D8</td></tr>
+          <tr><td class="col">account_id</td><td class="type">BIGINT</td><td class="desc">FK <code class="inline">accounts(id)</code> · denormalized for tenant filtering · D8</td></tr>
           <tr><td class="col">customer_id</td><td class="type">TEXT</td><td class="desc">WhatsApp <code class="inline">phone_number</code> via Rails (D19); logical join to <code class="inline">contact_profiles(account_id, customer_id)</code></td></tr>
           <tr><td class="col">business_phone_id</td><td class="type">TEXT</td><td class="desc">Customer's WhatsApp Business phone id</td></tr>
           <tr><td class="col">mode</td><td class="type">VARCHAR(16)</td><td class="desc"><code class="inline">ai</code> | <code class="inline">takeover</code> · default <code class="inline">'ai'</code></td></tr>
@@ -1356,8 +1360,8 @@
         <tbody>
           <tr><td class="col">id</td><td class="type">UUID</td><td class="desc">PK · mirrors LangChain <code class="inline">message.id</code> · no DB default</td></tr>
           <tr><td class="col">chat_agent_session_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">chat_agent_sessions(id)</code></td></tr>
-          <tr><td class="col">direction</td><td class="type">VARCHAR(16)</td><td class="desc"><code class="inline">inbound</code> | <code class="inline">outbound</code> | <code class="inline">system</code> | <code class="inline">support</code></td></tr>
-          <tr><td class="col">role</td><td class="type">VARCHAR(20)</td><td class="desc"><code class="inline">user</code> | <code class="inline">assistant</code> | <code class="inline">system</code> | <code class="inline">tool</code></td></tr>
+          <tr><td class="col">direction</td><td class="type">VARCHAR(16)</td><td class="desc"><code class="inline">'inbound' | 'outbound' | 'system' | 'support'</code></td></tr>
+          <tr><td class="col">role</td><td class="type">VARCHAR(20)</td><td class="desc"><code class="inline">'user' | 'assistant' | 'system' | 'tool'</code></td></tr>
           <tr><td class="col">content</td><td class="type">TEXT</td><td class="desc">Message body</td></tr>
           <tr><td class="col">tool_call_id</td><td class="type">TEXT</td><td class="desc">When <code class="inline">role='tool'</code></td></tr>
           <tr><td class="col">tool_calls</td><td class="type">JSONB</td><td class="desc">When the assistant called tools</td></tr>
@@ -1395,7 +1399,7 @@
         <tbody>
           <tr><td class="col">id</td><td class="type">UUID</td><td class="desc">PK · <code class="inline">DEFAULT gen_random_uuid()</code></td></tr>
           <tr><td class="col">chat_agent_session_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">chat_agent_sessions(id)</code> · nullable for global events</td></tr>
-          <tr><td class="col">account_id</td><td class="type">UUID</td><td class="desc">FK <code class="inline">accounts(id)</code> · D8</td></tr>
+          <tr><td class="col">account_id</td><td class="type">BIGINT</td><td class="desc">FK <code class="inline">accounts(id)</code> · D8</td></tr>
           <tr><td class="col">kind</td><td class="type">VARCHAR(64)</td><td class="desc"><code class="inline">support_command_received</code>, <code class="inline">support_message_received</code>, <code class="inline">takeover_started</code>, <code class="inline">takeover_ended</code>, <code class="inline">mirror_write_failed</code>, <code class="inline">turn_timeout</code>, <code class="inline">help_requested</code>, <code class="inline">tool_budget_exceeded</code>, <code class="inline">custom_tool_blocked</code>, … <em>(NOT emitted: <code class="inline">observer_added</code>, <code class="inline">observer_left</code> — D39)</em></td></tr>
           <tr><td class="col">actor_kind</td><td class="type">VARCHAR(16)</td><td class="desc"><code class="inline">system</code> | <code class="inline">operator</code> | <code class="inline">user</code> | <code class="inline">agent</code></td></tr>
           <tr><td class="col">actor_email</td><td class="type">TEXT</td><td class="desc">When <code class="inline">actor_kind='operator'</code></td></tr>
@@ -1432,10 +1436,36 @@
   <span class="k">PRIMARY KEY</span> (thread_id, checkpoint_ns, checkpoint_id)
 );
 
-<span class="k">CREATE TABLE</span> checkpoint_blobs   ( <span class="c">/* PK (thread_id, ns, channel, version), blob BYTEA */</span> );
-<span class="k">CREATE TABLE</span> checkpoint_writes  ( <span class="c">/* PK (thread_id, ns, ckpt_id, task_id, idx), blob BYTEA */</span> );
+<span class="k">CREATE TABLE</span> checkpoint_blobs (
+  thread_id     <span class="t">TEXT</span>  <span class="k">NOT NULL</span>,
+  checkpoint_ns <span class="t">TEXT</span>  <span class="k">NOT NULL DEFAULT</span> <span class="s">''</span>,
+  channel       <span class="t">TEXT</span>  <span class="k">NOT NULL</span>,
+  version       <span class="t">TEXT</span>  <span class="k">NOT NULL</span>,
+  type          <span class="t">TEXT</span>  <span class="k">NOT NULL</span>,
+  blob          <span class="t">BYTEA</span>,                              <span class="c">-- nullable (folds v4 DROP NOT NULL)</span>
+  <span class="k">PRIMARY KEY</span> (thread_id, checkpoint_ns, channel, version)
+);
+<span class="k">CREATE TABLE</span> checkpoint_writes (
+  thread_id     <span class="t">TEXT</span>    <span class="k">NOT NULL</span>,
+  checkpoint_ns <span class="t">TEXT</span>    <span class="k">NOT NULL DEFAULT</span> <span class="s">''</span>,
+  checkpoint_id <span class="t">TEXT</span>    <span class="k">NOT NULL</span>,
+  task_id       <span class="t">TEXT</span>    <span class="k">NOT NULL</span>,
+  idx           <span class="t">INTEGER</span> <span class="k">NOT NULL</span>,
+  channel       <span class="t">TEXT</span>    <span class="k">NOT NULL</span>,
+  type          <span class="t">TEXT</span>,
+  blob          <span class="t">BYTEA</span>   <span class="k">NOT NULL</span>,
+  task_path     <span class="t">TEXT</span>    <span class="k">NOT NULL DEFAULT</span> <span class="s">''</span>,        <span class="c">-- folds v9 ADD COLUMN</span>
+  <span class="k">PRIMARY KEY</span> (thread_id, checkpoint_ns, checkpoint_id, task_id, idx)
+);
 <span class="k">CREATE TABLE</span> checkpoint_migrations ( v <span class="t">INTEGER</span> <span class="k">PRIMARY KEY</span> );
-<span class="k">INSERT INTO</span> checkpoint_migrations <span class="k">VALUES</span> (<span class="n">1</span>),(<span class="n">2</span>),(<span class="n">3</span>),(<span class="n">4</span>),(<span class="n">5</span>);</pre>
+
+<span class="c">-- v6, v7, v8 — three thread_id indexes (CONCURRENTLY upstream; plain CREATE here, tables are empty)</span>
+<span class="k">CREATE INDEX</span> checkpoints_thread_id_idx       <span class="k">ON</span> checkpoints       (thread_id);
+<span class="k">CREATE INDEX</span> checkpoint_blobs_thread_id_idx  <span class="k">ON</span> checkpoint_blobs  (thread_id);
+<span class="k">CREATE INDEX</span> checkpoint_writes_thread_id_idx <span class="k">ON</span> checkpoint_writes (thread_id);
+
+<span class="c">-- Stamp every upstream migration version (0..10) so AsyncPostgresSaver.setup() is a no-op if invoked.</span>
+<span class="k">INSERT INTO</span> checkpoint_migrations <span class="k">VALUES</span> (<span class="n">0</span>),(<span class="n">1</span>),(<span class="n">2</span>),(<span class="n">3</span>),(<span class="n">4</span>),(<span class="n">5</span>),(<span class="n">6</span>),(<span class="n">7</span>),(<span class="n">8</span>),(<span class="n">9</span>),(<span class="n">10</span>);</pre>
       <div class="callout callout--warn">
         <span class="label">Hard rule (D33)</span>
         <p style="margin:0">Pin is exact: <code class="inline">langgraph-checkpoint-postgres==3.0.5</code>. If that pin moves, the migration count <strong>and</strong> the seeded values must update together; CI guard catches drift.</p>
@@ -1594,7 +1624,7 @@
 
   <h3 style="margin-top:32px">Inbound payload (gateway → Rails)</h3>
 <pre class="code">{
-  <span class="s">"account_id"</span>:        <span class="s">"&lt;UUID&gt;"</span>,
+  <span class="s">"account_id"</span>:        <span class="n">12345</span>,
   <span class="s">"agent_id"</span>:          <span class="s">"support-bot"</span>,
   <span class="s">"business_phone_id"</span>: <span class="s">"1234567890"</span>,
   <span class="s">"customer_id"</span>:       <span class="s">"9911223344"</span>,
@@ -1643,7 +1673,7 @@
 }</pre>
 
   <h3 style="margin-top:32px">Python internal surface (HMAC-protected)</h3>
-<pre class="code"><span class="c"># Auth: X-Service-Auth · X-Service-Timestamp · X-Service-Account-Id (UUID)</span>
+<pre class="code"><span class="c"># Auth: X-Service-Auth · X-Service-Timestamp · X-Service-Account-Id (BIGINT serialized as string)</span>
 <span class="c">#       X-Operator-Email · X-Operator-Id  — all bound into the HMAC payload (D17, D18)</span>
 <span class="c">#       Idempotency-Key (on /support — D37)</span>
 
@@ -1670,11 +1700,11 @@
   <h3 style="margin-top:32px">WebSocket event shapes</h3>
   <p>Discriminated union on <code class="inline">kind</code>. Filter is applied at <strong>publish</strong> time (per Appendix A.6) based on which endpoint the subscriber connected to.</p>
 <pre class="code"><span class="c">// user-stream (D35) — read-only; ONLY message_received frames where direction IN ('user','ai')</span>
-{ <span class="s">"kind"</span>:<span class="s">"message_received"</span>, <span class="s">"conv_id"</span>:<span class="s">"…"</span>, <span class="s">"ts"</span>:<span class="s">"…"</span>, <span class="s">"direction"</span>:<span class="s">"user|ai"</span>, <span class="s">"role"</span>:<span class="s">"…"</span>, <span class="s">"content"</span>:<span class="s">"…"</span>, <span class="s">"message_id"</span>:<span class="s">"…"</span> }
+{ <span class="s">"kind"</span>:<span class="s">"message_received"</span>, <span class="s">"conv_id"</span>:<span class="s">"…"</span>, <span class="s">"ts"</span>:<span class="s">"…"</span>, <span class="s">"direction"</span>:<span class="s">"user|ai"</span>, <span class="s">"role"</span>:<span class="s">"user|ai"</span>, <span class="s">"content"</span>:<span class="s">"…"</span>, <span class="s">"message_id"</span>:<span class="s">"…"</span> }
 <span class="c">// (no events, no operator messages, no whisper/tell, no audit)</span>
 
 <span class="c">// support-stream (D36) — read-only; full operator view + audit</span>
-{ <span class="s">"kind"</span>:<span class="s">"message_received"</span>,         <span class="s">"conv_id"</span>:<span class="s">"…"</span>, <span class="s">"ts"</span>:<span class="s">"…"</span>, <span class="s">"direction"</span>:<span class="s">"user|ai|operator"</span>, <span class="s">"role"</span>:<span class="s">"…"</span>, <span class="s">"content"</span>:<span class="s">"…"</span>, <span class="s">"message_id"</span>:<span class="s">"…"</span> }
+{ <span class="s">"kind"</span>:<span class="s">"message_received"</span>,         <span class="s">"conv_id"</span>:<span class="s">"…"</span>, <span class="s">"ts"</span>:<span class="s">"…"</span>, <span class="s">"direction"</span>:<span class="s">"user|ai|operator"</span>, <span class="s">"role"</span>:<span class="s">"user|ai|operator"</span>, <span class="s">"content"</span>:<span class="s">"…"</span>, <span class="s">"message_id"</span>:<span class="s">"…"</span> }
 { <span class="s">"kind"</span>:<span class="s">"support_message_received"</span>, <span class="s">"conv_id"</span>:<span class="s">"…"</span>, <span class="s">"ts"</span>:<span class="s">"…"</span>, <span class="s">"text"</span>:<span class="s">"…"</span>, <span class="s">"by"</span>:<span class="s">"…"</span> }   <span class="c">// command=null + message (D37 plain operator message)</span>
 { <span class="s">"kind"</span>:<span class="s">"mode_changed"</span>,             <span class="s">"conv_id"</span>:<span class="s">"…"</span>, <span class="s">"ts"</span>:<span class="s">"…"</span>, <span class="s">"mode"</span>:<span class="s">"ai|takeover"</span>, <span class="s">"active_human"</span>:<span class="s">"…?"</span> }
 { <span class="s">"kind"</span>:<span class="s">"system_note"</span>,              <span class="s">"conv_id"</span>:<span class="s">"…"</span>, <span class="s">"ts"</span>:<span class="s">"…"</span>, <span class="s">"text"</span>:<span class="s">"…"</span> }
@@ -1696,8 +1726,11 @@
       <h2>Three nodes.<br>One reducer.<br>Hard limits everywhere.</h2>
       <p class="lead">
         <code class="inline">router</code> dispatches by <code class="inline">mode</code>;
-        <code class="inline">ai_agent</code> drains pending whispers, prepends the system
-        prompt + multi-prompt block, calls the LLM with bound tools; <code class="inline">human_gate</code>
+        <code class="inline">ai_agent</code> assembles the LLM input in this exact order
+        (POC-verified): (1) <code class="inline">SYSTEM_PROMPT</code> + multi-prompt block,
+        (2) <code class="inline">support_guidance_history</code>, (3) <code class="inline">state["messages"]</code>,
+        (4) <strong>pending whispers LAST</strong> so they sit closest to the model's
+        attention; then calls the LLM with bound tools. <code class="inline">human_gate</code>
         calls <code class="inline">interrupt(None)</code>. <code class="inline">add_messages</code>
         is the ONLY reducer (D12); every other ConvState field is overwritten on
         <code class="inline">aupdate_state</code>.
@@ -1747,6 +1780,11 @@
   <div class="callout callout--info">
     <span class="label">Operator-triggered <code class="inline">interrupt()</code> only (D14)</span>
     <p style="margin:0"><code class="inline">interrupt()</code> fires only inside <code class="inline">human_gate</code>, which is reached when an operator runs <code class="inline">/takeover</code>. <code class="inline">request_human_help</code> is a flag-only tool — it does NOT call <code class="inline">interrupt()</code>. POC pattern preserved verbatim.</p>
+  </div>
+
+  <div class="callout callout--info" style="margin-top:14px">
+    <span class="label">Implementor note — operator messages in the prompt</span>
+    <p style="margin:0"><code class="inline">prompts.py</code>'s <code class="inline">SYSTEM_PROMPT</code> MUST include a paragraph teaching the LLM that any <code class="inline">AIMessage</code> whose <code class="inline">name</code> field is set (e.g. <code class="inline">name="alice@example.com"</code>) is <strong>not the AI itself talking</strong> — it is a human support operator who has joined the conversation. The model should treat those turns as ground truth context, never contradict them, and pick up the conversation thread aware of what the operator already said. Without this paragraph, the LLM gets confused when reading its own message history during the AI-resume phase after a <code class="inline">/end</code> takeover.</p>
   </div>
 </section>
 
@@ -1841,7 +1879,7 @@
   <span class="s">"kind"</span>:          <span class="s">"help_requested"</span>,
   <span class="s">"agent_id"</span>:      <span class="s">"support-bot"</span>,
   <span class="s">"agent_name"</span>:    <span class="s">"Support Bot"</span>,
-  <span class="s">"account_id"</span>:    <span class="s">"&lt;UUID&gt;"</span>,
+  <span class="s">"account_id"</span>:    <span class="n">12345</span>,
   <span class="s">"account_name"</span>:  <span class="s">"Acme Co"</span>,
   <span class="s">"session_id"</span>:    <span class="s">"&lt;UUID&gt;"</span>,
   <span class="s">"customer_id"</span>:   <span class="s">"9911223344"</span>,
@@ -1964,7 +2002,7 @@
         <li><code class="inline">20260509000003_create_chat_agent_sessions.rb</code> — sessions mirror.</li>
         <li><code class="inline">20260509000004_create_chat_agent_messages.rb</code> — messages mirror.</li>
         <li><code class="inline">20260509000005_create_chat_agent_events.rb</code> — audit + structured errors.</li>
-        <li><code class="inline">20260509000006_create_langgraph_checkpoint_tables.rb</code> — Rails-owned DDL for <code class="inline">langgraph-checkpoint-postgres==3.0.5</code>; seeds <code class="inline">checkpoint_migrations</code> versions 1..5.</li>
+        <li><code class="inline">20260509000006_create_langgraph_checkpoint_tables.rb</code> — Rails-owned DDL for <code class="inline">langgraph-checkpoint-postgres==3.0.5</code>; folds v4 (<code class="inline">DROP NOT NULL</code> on <code class="inline">checkpoint_blobs.blob</code>) and v9 (<code class="inline">ADD COLUMN task_path</code>) inline; seeds <code class="inline">checkpoint_migrations</code> versions 0..10 (all 11 entries from upstream <code class="inline">MIGRATIONS</code> list).</li>
       </ol>
       <p>Models in <code class="inline">app/models/{chat_agent,chat_agent_session,chat_agent_message,chat_agent_event}.rb</code>. <code class="inline">Admin::ChatAgentsController</code> with full CRUD + <code class="inline">activate</code> / <code class="inline">disable</code> member actions. Strong params: <code class="inline">:llm_provider_template_id</code>, <code class="inline">llm_config: {}</code>, <code class="inline">agent_config: {}</code>, <code class="inline">memory_config: {}</code>, <code class="inline">config: {}</code>.</p>
       <h5>Acceptance</h5>
@@ -2035,6 +2073,11 @@
     </summary>
     <div class="phase-body">
       <p><code class="inline">state.py</code>, <code class="inline">prompts.py</code>, <code class="inline">nodes.py</code>, <code class="inline">graph.py</code>. Multi-prompt wiring (D15): <code class="inline">ai_agent</code> reads <code class="inline">current_state</code> and passes it to ToolFactory; transition tools update <code class="inline">current_state</code> via <code class="inline">Command(update={"current_state": "X"})</code>.</p>
+      <p><code class="inline">state.py</code> also exposes two helpers used to mix operator turns into the LangGraph message history:</p>
+      <ul class="dashes" style="font-size:14px; max-width:80ch">
+        <li><code class="inline">support_message(content: str, author_email: str) -&gt; AIMessage</code> — builds <code class="inline">AIMessage(content=content, name=author_email, additional_kwargs={"author": "support"})</code> for operator turns mixed into the message history.</li>
+        <li><code class="inline">is_support(msg) -&gt; bool</code> — returns <code class="inline">True</code> iff the message has <code class="inline">additional_kwargs.author == "support"</code>. Used by <code class="inline">stream_service</code> filters to route operator turns onto the support-stream only (Appendix A.6).</li>
+      </ul>
       <h5>Acceptance</h5>
       <p>Unit tests drive a multi-prompt fixture through <code class="inline">state_a → tool → state_b → tool → state_c</code>; state changes survive checkpointing.</p>
     </div>
@@ -2238,7 +2281,7 @@
     conn,                          <span class="c"># caller-provided async psycopg conn in open txn</span>
     conv_id: str,
     agent_id: str,
-    account_id: str,               <span class="c"># UUID string per D8</span>
+    account_id: int,               <span class="c"># BIGINT per D8</span>
     operator_email: str,
     user_text: str,
     idempotency_key: str,          <span class="c"># whatsapp_message_id or Idempotency-Key</span>
@@ -2379,7 +2422,7 @@
         <span class="k">raise</span> HTTPException(<span class="n">401</span>, <span class="s">"invalid_signature"</span>)
 
     <span class="k">return</span> {
-        <span class="s">"account_id"</span>:     x_service_account_id,   <span class="c"># UUID string (D8)</span>
+        <span class="s">"account_id"</span>:     int(x_service_account_id),   <span class="c"># BIGINT per D8</span>
         <span class="s">"operator_email"</span>: x_operator_email,
         <span class="s">"operator_id"</span>:    x_operator_id,
     }</pre>
@@ -2689,9 +2732,10 @@ TTL_SECONDS = <span class="n">300</span>  <span class="c"># 5 minutes</span>
         <li><strong>v1.x</strong> · WhatsApp delivery status webhooks + DLQ.</li>
         <li><strong>v1.x</strong> · ActionCable + Redis pub/sub for WS through Rails.</li>
         <li><strong>v1.x</strong> · Multi-secret HMAC bundle for zero-downtime rotation (O3).</li>
-        <li><strong>v1.x</strong> · Checkpoint row pruning (<code class="inline">ended_at &lt; now() - 90 days</code>).</li>
+        <li><strong>v2</strong> · LangGraph checkpoint table cleanup script. The <code class="inline">checkpoints</code>, <code class="inline">checkpoint_blobs</code>, and <code class="inline">checkpoint_writes</code> tables grow fast (one row per turn, plus blob rows per state field). Our mirror tables (<code class="inline">chat_agent_messages</code>, <code class="inline">chat_agent_events</code>) already store every conversational artifact for audit + replay, so the LangGraph rows are only needed while a session is open. Cleanup script: delete checkpoint rows for <code class="inline">thread_id</code>s whose corresponding <code class="inline">chat_agent_sessions.ended_at IS NOT NULL AND ended_at &lt; now() - interval '7 days'</code>. Run as a Sidekiq cron or a Python scheduled job. Add a metrics counter for rows pruned per run.</li>
         <li><strong>v2</strong> · Channels beyond WhatsApp (Telegram, web widget, SMS).</li>
         <li><strong>v2</strong> · Time-travel / replay debugging (<code class="inline">checkpoint_ns</code> already reserved as <code class="inline">"live"</code>).</li>
+        <li><strong>v2</strong> · Per-model <code class="inline">context_window</code> field (on <code class="inline">llm_providers</code> and/or <code class="inline">agent_llm_configurations</code>) for memory-budget enforcement.</li>
       </ul>
       <div class="callout callout--rose" style="margin-top:14px">
         <span class="label">Forbidden — ever</span>
@@ -2879,3 +2923,8 @@ TTL_SECONDS = <span class="n">300</span>  <span class="c"># 5 minutes</span>
 </script>
 </body>
 </html>
+
+
+
+
+
