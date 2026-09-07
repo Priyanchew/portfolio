@@ -2,63 +2,127 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [master, main]
+    branches: [master]
+  workflow_run:
+    workflows: [Portfolio checks]
+    branches: [new]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# Let a deployment finish before the next one starts.
+# Both versions must ship together; serialize publication of the combined site.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
   build:
+    # Pages permits deployments from master. Successful pushes to new trigger
+    # this workflow on master, keeping the existing deployment policy intact.
+    if: >-
+      github.ref == 'refs/heads/master' &&
+      (github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - version: root
+            base-path: ''
+          - version: new
+            base-path: '/new'
     steps:
-      - name: Checkout
+      - name: Checkout version
         uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.version == 'root' && 'master' || github.event.workflow_run.head_sha || 'new' }}
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: 22
           cache: pnpm
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Check code
+      - name: Check redesign
+        if: matrix.version == 'new'
         run: pnpm check
+        env:
+          NEXT_PUBLIC_BASE_PATH: /new
 
-      - name: Build
+      - name: Build version
         run: pnpm build
         env:
-          # Required by scripts/protect-osvi-docs.mjs to encrypt OSVI HTML files
-          # before the GitHub Pages artifact is uploaded.
+          NEXT_PUBLIC_BASE_PATH: ${{ matrix.base-path }}
           OSVI_DOCS_ACCESS_KEY: ${{ secrets.OSVI_DOCS_ACCESS_KEY }}
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Save version
+        uses: actions/upload-artifact@v4
         with:
-          path: ./out
+          name: portfolio-${{ matrix.version }}
+          path: out/
+          include-hidden-files: true
+          retention-days: 1
 
-  deploy:
+  assemble:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - name: Download both versions
+        uses: actions/download-artifact@v4
+        with:
+          pattern: portfolio-*
+          path: exports
+
+      - name: Compose root and /new
+        run: |
+          test -f exports/portfolio-root/index.html
+          test -f exports/portfolio-new/index.html
+          test ! -e exports/portfolio-root/new
+          mkdir -p site/new
+          cp -a exports/portfolio-root/. site/
+          cp -a exports/portfolio-new/. site/new/
+          rm -f site/new/CNAME site/new/.nojekyll
+          touch site/.nojekyll
+          test -f site/index.html
+          test -f site/new/index.html
+          test -d site/_next
+          test -d site/new/_next
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload combined site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+  deploy:
+    needs: assemble
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy both versions
         id: deployment
         uses: actions/deploy-pages@v4

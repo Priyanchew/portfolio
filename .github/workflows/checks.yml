@@ -16,6 +16,11 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        base-path: ["", "/new"]
+    env:
+      NEXT_PUBLIC_BASE_PATH: ${{ matrix.base-path }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

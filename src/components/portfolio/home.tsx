@@ -8,6 +8,7 @@ import { WaveMark } from "./objects";
 import { ProjectFolders } from "./projects";
 import { AfterHours } from "./after-hours";
 import { site, work, writing } from "@/data/portfolio";
+import { withBasePath } from "@/lib/site-path";
 
 export function PortfolioHome() {
   const [openWork, setOpenWork] = useState<string | null>(null);
@@ -16,11 +17,11 @@ export function PortfolioHome() {
     <main className="portfolio-home" id="top">
       <section className="intro" aria-labelledby="intro-heading">
         <div className="intro-topline">
-          <div className="portrait-wrap"><Image src={site.avatar} width={72} height={80} priority alt={site.name} className="portrait" /></div>
+          <div className="portrait-wrap"><Image src={withBasePath(site.avatar)} width={72} height={80} priority alt={site.name} className="portrait" /></div>
           <div className="location-note"><span className="location-dot" /> {site.location}</div>
         </div>
         <h1 id="intro-heading">Hey, I’m {site.firstName}<span className="name-dot">.</span></h1>
-        <p className="intro-lead">{site.tagline}<br className="desktop-break" /> Currently in the Founder’s office at <a href="https://osvi.ai" className="inline-company"><Image src="/logos/osvi-logo.jpg" width={18} height={18} alt="" /> OSVI <ArrowUpRight size={14} aria-hidden /></a>.</p>
+        <p className="intro-lead">{site.tagline}<br className="desktop-break" /> Currently in the Founder’s office at <a href="https://osvi.ai" className="inline-company"><Image src={withBasePath("/logos/osvi-logo.jpg")} width={18} height={18} alt="" /> OSVI <ArrowUpRight size={14} aria-hidden /></a>.</p>
         <p className="intro-context">I’ve been coding since I was 12. A love of computers grew into a fascination with LLMs, AI agents, and the systems around them. That curiosity has taken me through an early startup product, a startup of my own, and open source.</p>
         <p className="intro-context">These days, I care about taking an idea all the way to something useful—from the system underneath to the details you interact with.</p>
         <div className="intro-links">
@@ -35,7 +36,7 @@ export function PortfolioHome() {
             const expanded = openWork === item.id;
             return <article className={`work-entry ${expanded ? "is-open" : ""}`} key={item.id}>
               <h3><button type="button" className="work-trigger" aria-expanded={expanded} aria-controls={`work-${item.id}`} onClick={() => setOpenWork(expanded ? null : item.id)}>
-                <span className={`company-logo logo-${item.id}`}><Image src={item.logo} width={27} height={27} alt="" /></span>
+                <span className={`company-logo logo-${item.id}`}><Image src={withBasePath(item.logo)} width={27} height={27} alt="" /></span>
                 <span className="work-summary"><span className="work-name">{item.name}</span><span className="work-line">{item.line}</span></span>
                 <span className="work-meta"><span className="work-date">{item.period}</span><Plus size={14} className="work-plus" aria-hidden /></span>
               </button></h3>

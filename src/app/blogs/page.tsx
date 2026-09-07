@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
-import { writing } from "@/data/portfolio";
+import { site, writing } from "@/data/portfolio";
+import { withBasePath } from "@/lib/site-path";
 
 export const metadata: Metadata = {
   title: "Writing",
   description: "Notes on AI agents, developer tools, and building things.",
-  alternates: { canonical: "/blogs/" },
+  alternates: { canonical: `${site.url}${withBasePath("/blogs/")}` },
 };
 
 export default function BlogsPage() {

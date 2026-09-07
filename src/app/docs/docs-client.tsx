@@ -4,6 +4,7 @@ import BlurFade from "@/components/magicui/blur-fade";
 import { ChevronRight, FileText, Lock } from "lucide-react";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
+import { withBasePath } from "@/lib/site-path";
 
 const AUTH_KEY = "osvi_auth";
 const AUTH_VALUE = "authenticated_v1";
@@ -60,7 +61,7 @@ export default function DocsClient() {
             {PUBLIC_DOCS.map((doc) => (
               <a
                 key={doc.href}
-                href={doc.href}
+                href={withBasePath(doc.href)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-start gap-3 border border-border rounded-xl p-4 hover:bg-accent/40 transition-colors"

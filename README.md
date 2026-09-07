@@ -2,7 +2,7 @@
 
 Priyanshu Choudhary’s personal portfolio: AI agents, product engineering, open source, and a little life outside work.
 
-[Website](https://priyanchew.dev) · [Redesign branch](https://github.com/Priyanchew/portfolio/tree/new)
+[Current site](https://priyanchew.dev) · [Redesign preview](https://priyanchew.dev/new/) · [Redesign branch](https://github.com/Priyanchew/portfolio/tree/new)
 
 Built with Next.js 16, React 19, TypeScript, and Tailwind CSS 4. The site exports to static HTML for GitHub Pages. The portrait, font, company marks, and artwork are local assets.
 
@@ -28,6 +28,7 @@ Open [localhost:3022](http://localhost:3022). `corepack enable` is only needed i
 | `pnpm check` | Run ESLint and TypeScript checks. |
 | `pnpm lint:fix` | Apply ESLint’s automatic fixes. |
 | `pnpm build:check` | Build and verify the static export using an ephemeral document key. |
+| `NEXT_PUBLIC_BASE_PATH=/new pnpm build:check` | Verify the deployment under `/new/`, including prefixed assets, links, and metadata. |
 | `pnpm build` | Create the production export with `OSVI_DOCS_ACCESS_KEY` supplied in the environment. |
 | `pnpm start` | Preview an existing `out/` export at [localhost:3023](http://localhost:3023). |
 
@@ -76,13 +77,24 @@ The production build runs [`scripts/protect-osvi-docs.mjs`](scripts/protect-osvi
 
 `pnpm build:check` uses a random key that is never printed or saved. It checks the expected exported routes and verifies that every encrypted document decrypts back to its source. This is a validation build: use the production workflow to build an artifact with the real deployment key.
 
+## Two versions on GitHub Pages
+
+The deployment combines two independent builds into one Pages artifact:
+
+- `master` at `https://priyanchew.dev/`.
+- `new` at `https://priyanchew.dev/new/`.
+
+The `new` build sets `NEXT_PUBLIC_BASE_PATH=/new`. Next.js handles route links; `src/lib/site-path.ts` prefixes public images and native document links. Local development keeps the base path empty, so the usual preview remains at `http://localhost:3022/`.
+
+After a successful **push** check on `new`, the deployment workflow runs from `master`, builds both versions, and publishes them together. This keeps the Pages environment’s existing master-only deployment policy. A root update also rebuilds both versions. To deploy manually, dispatch the deployment workflow on `master`.
+
+The workflow file is kept in sync on both branches. Deployments do not merge the redesigned application into `master`; its existing root application is built separately.
+
 ## GitHub Actions
 
-- [`checks.yml`](.github/workflows/checks.yml) runs installation, lint, type checks, and the validation build on `new`, `master`, `main`, and pull requests. It needs no production secrets and does not deploy.
-- [`deploy.yml`](.github/workflows/deploy.yml) builds and publishes GitHub Pages on `master` or `main`, or when manually dispatched. It uses the existing `OSVI_DOCS_ACCESS_KEY` repository secret.
-- Both workflows use `.nvmrc`, the pinned package manager, and a frozen lockfile.
-
-Pushing to `new` runs checks. Publishing the redesign is a separate merge or deployment action.
+- [`checks.yml`](.github/workflows/checks.yml) validates both empty and `/new` base paths on `new`, `master`, `main`, and pull requests. It needs no production secrets.
+- [`deploy.yml`](.github/workflows/deploy.yml) runs from `master` on a root push, a successful same-repository push check on `new`, or manual dispatch. Its root/new build jobs encrypt documents using the existing `OSVI_DOCS_ACCESS_KEY`, then assemble a single Pages artifact.
+- CI uses Node.js 22, pnpm 10.33.0, and frozen lockfiles. Both versions must build successfully before deployment.
 
 ## License and attribution
 

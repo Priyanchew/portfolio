@@ -5,6 +5,7 @@ import type { OsviDocEntry } from "./get-osvi-docs";
 import { ChevronLeft, ChevronRight, FileText, Lock, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { withBasePath } from "@/lib/site-path";
 
 // SHA-256 of the access key. The plaintext key is NOT shipped in the bundle.
 // To rotate: pick a new key, run
@@ -56,7 +57,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
     if (authState !== "unlocked") return;
     const params = new URLSearchParams(window.location.search);
     const from = params.get("from");
-    if (from && from.startsWith("/docs/osvi/")) {
+    if (from && from.startsWith(withBasePath("/docs/osvi/"))) {
       window.location.replace(from);
     }
   }, [authState]);

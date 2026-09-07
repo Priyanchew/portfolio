@@ -48,4 +48,4 @@ The repository’s existing production build requires `OSVI_DOCS_ACCESS_KEY` to 
 - Browser checks covered desktop and a 390px mobile viewport, no horizontal overflow, loaded images, light/dark themes, work disclosures, project folders, keyboard close/focus handling, the longer story, and navigation to the existing writing page. The latest revision also checks month-level dates at narrow widths and the new social/project links.
 - Social preview export verified as a PNG. The new icon and existing blog/document pages are present in the static export.
 
-The redesigned branch is `new`. Its checks workflow does not deploy; GitHub Pages deployment remains a separate main/master or manual workflow.
+The redesigned branch is `new`, published at `https://priyanchew.dev/new/` with `NEXT_PUBLIC_BASE_PATH=/new`. The existing `master` application is independently built at the domain root. Successful push checks on `new` trigger the shared deployment workflow from `master`; both outputs are assembled into one Pages artifact. The Pages environment remains restricted to deployments from `master`. Local development stays at port 3022 without a base path.
