@@ -2,30 +2,7 @@
 
 import { useState } from "react";
 import { ArrowUpRight, Minus, Plus } from "lucide-react";
-
-export const osviProjects = [
-  { name: "Chat Agents", description: "Shipped new features, scaled to heavy usage, and optimized performance as the platform grew." },
-  { name: "Conductor / AI Agent Builder", description: "Built the AI-driven experience for creating and configuring agents." },
-  { name: "Agent Evals & simulations", description: "Built tools to evaluate agents and simulate conversations before putting them to work." },
-  { name: "Tool libraries & MCP integrations", description: "Expanded what agents can do through reusable tools and MCP integrations." },
-  { name: "Account & user lifecycle", description: "Handled the account and user lifecycle across the platform." },
-  { name: "Reliability & performance", description: "Worked across the product to make it more reliable and efficient." },
-];
-
-const projectFolders = [
-  {
-    id: "orydle", name: "Orydle", subtitle: "the startup chapter", status: "archived", description: "I went all-in on my own startup while I was in college. The company didn’t work out. Here’s what I built inside it.",
-    items: [
-      { name: "Krum", description: "A control plane for coding agents, GitHub, CI/CD, and cloud infrastructure—with delegation, recovery, and shared context." },
-      { name: "Collaborative system design", description: "An LLM-powered architecture tool with diagram-to-code generation, Git versioning, visual diffs, and real-time collaboration." },
-    ],
-    footnote: "The startup ended. The urge to build didn’t.",
-  },
-  {
-    id: "osvi", name: "OSVI", subtitle: "the current rabbit hole", status: "in progress", description: "Founder’s office. Building across the product, from new agent capabilities to the systems that keep them running.",
-    items: osviProjects, footnote: "And I’m not done yet.", href: "https://osvi.ai",
-  },
-];
+import { projectFolders, site } from "@/data/portfolio";
 
 export function ProjectFolders() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -52,6 +29,6 @@ export function ProjectFolders() {
       <div className="project-panel-footer"><p>{folder.footnote}</p>{folder.href && <a href={folder.href} target="_blank" rel="noreferrer">Explore OSVI <ArrowUpRight size={13} aria-hidden /></a>}</div>
     </div>)}
     {!current && <p className="folder-hint">open a folder. there’s a lot in there.</p>}
-    <p className="projects-postscript">I still build on the side. Finding the time to finish things to my own standards is another story. Until they make it here, <a href="https://github.com/priyanchew?tab=repositories" target="_blank" rel="noreferrer">wander through my GitHub <ArrowUpRight size={12} aria-hidden /></a> for experiments, including the ones from college.</p>
+    <p className="projects-postscript">I still build on the side. Finding the time to finish things to my own standards is another story. Until they make it here, <a href={site.repositoriesUrl} target="_blank" rel="noreferrer">wander through my GitHub <ArrowUpRight size={12} aria-hidden /></a> for experiments, including the ones from college.</p>
   </section>;
 }

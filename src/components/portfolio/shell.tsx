@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { site } from "@/data/portfolio";
 
 export function PortfolioShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -12,7 +13,7 @@ export function PortfolioShell({ children }: { children: React.ReactNode }) {
     <div className="portfolio-shell">
       <a className="skip-link" href="#main-content">Skip to content</a>
       <header className="site-header">
-        <Link href="/" aria-label="Priyanshu, home" className="wordmark">priyanchew<span>.dev</span></Link>
+        <Link href="/" aria-label={`${site.firstName}, home`} className="wordmark">{site.handle}<span>.dev</span></Link>
         <nav aria-label="Main navigation">
           <Link href="/#work">work</Link>
           <Link href="/#elsewhere">elsewhere</Link>

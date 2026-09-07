@@ -29,11 +29,11 @@ The latest direction from Priyanshu is a small amount of personal character with
 
 Local clone: `/Users/priyanchew/workspace/priyanchew.dev`, branch `new`.
 
-Run with `pnpm dev --hostname 127.0.0.1 --port 3022`.
+Run with `pnpm dev` on port 3022; preview the static export with `pnpm start` on port 3023. See the repository README for setup, validation, and deployment.
 
-Homepage implementation lives in `src/components/portfolio/home.tsx`, with project folders in `projects.tsx`, personal content in `after-hours.tsx`, the small footer graphic in `objects.tsx`, global shell in `shell.tsx`, and styling in `src/app/portfolio.css`. The font and portrait are local, so the homepage does not fetch fonts or media from third parties. Existing blog and document routes remain in place.
+Shared identity, work history, project content, and writing live in `src/data/portfolio.ts`. Homepage implementation lives in `src/components/portfolio/home.tsx`, with project folders in `projects.tsx`, personal content in `after-hours.tsx`, the small footer graphic in `objects.tsx`, global shell in `shell.tsx`, and styling in `src/app/portfolio.css`. The font and portrait are local, so the homepage does not fetch fonts or media from third parties. The writing page uses the same published-article data as the homepage. The unused local-MDX stub and legacy template components/assets were removed. Document routes remain in place, with the existing encryption and access flow preserved.
 
-The repository’s existing production build requires `OSVI_DOCS_ACCESS_KEY` to encrypt its protected document export. Local build validation uses a random temporary key passed only to the build process. A deployment must use the existing deployment secret; the temporary test key is not a deployment configuration.
+The repository’s existing production build requires `OSVI_DOCS_ACCESS_KEY` to encrypt its protected document export. `pnpm build:check` uses a random temporary key passed only to its build subprocesses and verifies the encrypted document export by decrypting it back to the original source. A deployment must use the existing deployment secret; the temporary test key is not a deployment configuration.
 
 ## Details worth refining before publishing
 
@@ -42,8 +42,10 @@ The repository’s existing production build requires `OSVI_DOCS_ACCESS_KEY` to 
 
 ## Validation
 
-- Frozen-lockfile dependency install; no dependency versions changed.
+- Dependency versions for Next.js, React, and Tailwind are retained. Unused template dependencies are removed; `serve` provides local static-export previews. Node.js 22 and pnpm 10.33.0 are shared with CI.
 - Production build and TypeScript checks passed; all pages exported and the existing protected document was encrypted.
-- Focused ESLint and Git whitespace checks passed.
+- Repository checks are `pnpm check` (ESLint and TypeScript) and `pnpm build:check` (static build and encrypted-document export verification).
 - Browser checks covered desktop and a 390px mobile viewport, no horizontal overflow, loaded images, light/dark themes, work disclosures, project folders, keyboard close/focus handling, the longer story, and navigation to the existing writing page. The latest revision also checks month-level dates at narrow widths and the new social/project links.
 - Social preview export verified as a PNG. The new icon and existing blog/document pages are present in the static export.
+
+The redesigned branch is `new`. Its checks workflow does not deploy; GitHub Pages deployment remains a separate main/master or manual workflow.

@@ -89,7 +89,7 @@ export default function DocsClient() {
                     OSVI
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    Internal docs and write-ups for the OSVI internship.
+                    Internal docs and write-ups from my work at OSVI.
                   </span>
                 </div>
                 <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />

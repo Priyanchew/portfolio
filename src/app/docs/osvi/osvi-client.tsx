@@ -168,7 +168,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
           </button>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          Internal docs and write-ups for the OSVI internship.
+          Internal docs and write-ups from my work at OSVI.
         </p>
       </BlurFade>
 

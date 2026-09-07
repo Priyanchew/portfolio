@@ -95,8 +95,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px soli
 .detail-link { display: inline-flex; align-items: center; gap: 4px; color: var(--ink); text-underline-offset: 4px; font-size: 12px; }
 .story-note { margin-top: 12px; }
 .story-note summary { list-style: none; display: inline-flex; align-items: center; gap: 10px; font-size: 12px; color: var(--secondary-ink); padding: 9px 0; }
-.story-note summary::-webkit-details-marker::-webkit-details-marker { display: none; }
-.story-note summary:hover:hover { color: var(--ink); }
+.story-note summary::-webkit-details-marker { display: none; }
+.story-note summary:hover { color: var(--ink); }
 .story-note[open] summary svg { transform: rotate(45deg); }
 .story-note > div { padding: 9px 0 0; font-size: 15px; line-height: 1.75; color: var(--secondary-ink); animation: note-in .22s ease-out; }
 .story-note p { margin: 0 0 16px; }
@@ -171,6 +171,18 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px soli
 .writing-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; text-decoration: none; font-size: 14px; padding: 6px 0; }
 .writing-row > svg { flex-shrink: 0; color: var(--quiet-ink); }
 .writing-row:hover span { text-decoration: underline; text-underline-offset: 4px; }
+.writing-page h1, .not-found-page h1 { font-size: 27px; font-weight: 500; letter-spacing: -.7px; margin: 0 0 12px; }
+.page-intro, .not-found-page > p { color: var(--secondary-ink); font-size: 15px; line-height: 1.75; }
+.writing-archive { margin-top: 32px; }
+.writing-archive article { border-top: 1px solid var(--hairline); padding: 22px 0; }
+.writing-archive h2 { font-size: 18px; font-weight: 500; line-height: 1.6; margin: 0 0 12px; }
+.writing-archive h2 a { text-decoration: none; }
+.writing-archive h2 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.writing-archive h2 svg { display: inline; vertical-align: -2px; color: var(--quiet-ink); }
+.writing-archive p { font-size: 14px; color: var(--secondary-ink); line-height: 1.75; margin: 0 0 14px; }
+.writing-archive .writing-meta { font-size: 12px; color: var(--quiet-ink); }
+.not-found-page .not-found-code { font-family: var(--font-mono); color: var(--quiet-ink); font-size: 12px; margin: 0 0 20px; }
+.not-found-page > a { display: inline-flex; align-items: center; gap: 7px; margin-top: 20px; font-size: 14px; text-underline-offset: 4px; }
 .contact-section { margin-top: 58px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .contact-section h2 { font-size: 17px; font-weight: 500; letter-spacing: -.2px; margin: 0 0 6px; }
 .contact-section p { font-size: 13px; color: var(--secondary-ink); margin: 0 0 13px; }
