@@ -47,7 +47,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
         return;
       }
     } catch {
-      /* localStorage blocked — show the form anyway */
+      /* localStorage is blocked; show the form anyway. */
     }
     setAuthState("locked");
   }, []);

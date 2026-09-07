@@ -4,8 +4,8 @@ export const site = {
   firstName: "Priyanshu",
   handle: "priyanchew",
   url: "https://priyanchew.dev",
-  title: "Priyanshu Choudhary — Engineer & builder",
-  description: "Engineer building AI products, agent systems, and developer tools. Currently in the Founder’s office at OSVI, a core contributor to Agent Orchestrator, and previously founder of Orydle AI.",
+  title: "Priyanshu Choudhary | Engineer & builder",
+  description: "I build AI agents and developer tools. Currently in the Founder’s office at OSVI. Core contributor to Agent Orchestrator. Previously started Orydle AI.",
   tagline: "I build AI agents and the products around them.",
   location: "Bengaluru, India",
   avatar: "/priyanshu.jpg",
@@ -21,52 +21,52 @@ export const site = {
 
 export const work = [
   {
-    id: "osvi", name: "OSVI", role: "Founder’s office", period: "May 2026 — Present", logo: "/logos/osvi-logo.jpg",
+    id: "osvi", name: "OSVI", role: "Founder’s office", period: "May 2026 to Present", logo: "/logos/osvi-logo.jpg",
     line: "Founder’s office. Chat agents, builder, evals.",
-    paragraphs: ["I build across OSVI’s product in the Founder’s office. So far, that includes Chat Agents—shipping features, scaling to heavy usage, and optimizing performance—along with Conductor / AI Agent Builder, Agent Evals, and simulations.", "I’ve also worked on tool libraries and MCP integrations, account and user lifecycle handling, and reliability and performance across the platform.", "And I’m not done yet."],
+    paragraphs: ["In the Founder’s office at OSVI, I’ve been building Chat Agents, Conductor (our AI Agent Builder), and Agent Evals and simulations.", "For Chat Agents, I’ve added features, helped it handle a lot more usage, and worked on making it faster. I’ve also worked on tool libraries, MCP integrations, account and user lifecycle handling, and reliability across the product.", "Not done yet."],
     tags: "Chat Agents / Conductor / Evals / MCP", url: "https://osvi.ai", link: "Explore OSVI",
   },
   {
-    id: "ao", name: "Agent Orchestrator", role: "Core contributor · Open source", period: "Mar 2026 — Present", logo: "/logos/agent-orchestrator.svg",
+    id: "ao", name: "Agent Orchestrator", role: "Core contributor · Open source", period: "Mar 2026 to Present", logo: "/logos/agent-orchestrator.svg",
     line: "Core contributor. Parallel coding agents.",
-    paragraphs: ["I became a core contributor to Agent Orchestrator, an open-source system for running coding agents in parallel.", "I worked across Windows support, terminal and session reliability, local integrations, and validation harnesses, with product fixes spanning the CLI, dashboard, and runtime.", "I’m still involved today, contributing beyond code."],
+    paragraphs: ["I became a core contributor to Agent Orchestrator, which lets you run coding agents in parallel.", "I helped get it running on Windows and worked on terminal and session reliability, local integrations, and validation tools. That meant fixing things in the CLI, dashboard, and runtime.", "I still contribute, though these days it’s mostly outside the code."],
     tags: "Developer tools / Agent orchestration / Reliability", url: "https://aoagents.dev/", link: "Explore Agent Orchestrator",
   },
   {
-    id: "orydle", name: "Orydle AI", role: "Founder & engineer", period: "Aug 2025 — Apr 2026", logo: "/logos/orydle-brandmark.png",
+    id: "orydle", name: "Orydle AI", role: "Founder & engineer", period: "Aug 2025 to Apr 2026", logo: "/logos/orydle-brandmark.png",
     line: "My first startup. Built while I was in college.",
-    paragraphs: ["I started Orydle once the things I wanted to build became possible. I built Krum: a control plane for coding agents, GitHub, CI/CD, and cloud infrastructure, with work on delegation, recovery, and shared context.", "The startup didn’t work out. Moving from college to Bengaluru changed how I thought about startups. I kept building, first through open source, then at OSVI."],
-    tags: "Zero to one / Multi-agent systems / Product ownership",
+    paragraphs: ["I started Orydle in college when LLMs made the ideas I had feel doable. I built Krum to coordinate coding agents with GitHub, CI/CD, and cloud infrastructure. A lot of the work was figuring out how to split up tasks, recover from failures, and keep agents working with the same context.", "The startup didn’t work out. Moving from college to Bengaluru changed how I thought about startups. After Orydle, I got involved in open source and joined OSVI."],
+    tags: "AI agents / Developer tools / Product development",
   },
   {
-    id: "carbon", name: "Carbon Crunch", role: "Software developer intern", period: "Jul 2024 — Jan 2025", logo: "/logos/carbon-crunch.png",
-    line: "Built the early core product. Found my direction.",
-    paragraphs: ["Carbon Crunch is where entrepreneurship first caught my attention. I built the early core product, working on BRSR reporting automation and sustainability data analysis from July 2024 to January 2025.", "That included an AI-driven reporting pipeline using NLP and web scraping, plus tools to compare companies and track changes year over year. Seeing the founders lead, handle the hard parts, and care so deeply about one problem made me want to build something of my own."],
+    id: "carbon", name: "Carbon Crunch", role: "Software developer intern", period: "Jul 2024 to Jan 2025", logo: "/logos/carbon-crunch.png",
+    line: "Built the early core product. Sustainability reporting.",
+    paragraphs: ["I built the early core product at Carbon Crunch: tools for BRSR reporting and analysing sustainability data.", "I used NLP and web scraping to automate parts of the reporting process, and built tools to compare companies and track changes from year to year.", "Working with the founders got me interested in entrepreneurship. I saw how they ran the company and how much they cared about the problem. It made me want to try building something of my own."],
     tags: "Early product engineering / BRSR automation / Data tools", url: "https://www.carboncrunch.in/", link: "Explore Carbon Crunch",
   },
 ];
 
 export const osviProjects = [
-  { name: "Chat Agents", description: "Shipped new features, scaled to heavy usage, and optimized performance as the platform grew." },
-  { name: "Conductor / AI Agent Builder", description: "Built the AI-driven experience for creating and configuring agents." },
-  { name: "Agent Evals & simulations", description: "Built tools to evaluate agents and simulate conversations before putting them to work." },
-  { name: "Tool libraries & MCP integrations", description: "Expanded what agents can do through reusable tools and MCP integrations." },
-  { name: "Account & user lifecycle", description: "Handled the account and user lifecycle across the platform." },
-  { name: "Reliability & performance", description: "Worked across the product to make it more reliable and efficient." },
+  { name: "Chat Agents", description: "Added features, scaled up to handle more usage, and made things faster as the product grew." },
+  { name: "Conductor / AI Agent Builder", description: "Built the tools people use to create and configure agents with AI." },
+  { name: "Agent Evals & simulations", description: "Built ways to test agents with simulated conversations before they talk to real users." },
+  { name: "Tool libraries & MCP integrations", description: "Added reusable tools and MCP integrations so agents can work with other services." },
+  { name: "Account & user lifecycle", description: "Worked on how the product handles accounts and users throughout their time on it." },
+  { name: "Reliability & performance", description: "Fixed things that broke or slowed down across the product." },
 ];
 
 export const projectFolders = [
   {
-    id: "orydle", name: "Orydle", subtitle: "the startup chapter", status: "archived", description: "I went all-in on my own startup while I was in college. The company didn’t work out. Here’s what I built inside it.",
+    id: "orydle", name: "Orydle", subtitle: "my startup", status: "archived", description: "Orydle took up most of my time in college. These are the two things I built there.",
     items: [
-      { name: "Krum", description: "A control plane for coding agents, GitHub, CI/CD, and cloud infrastructure—with delegation, recovery, and shared context." },
-      { name: "Collaborative system design", description: "An LLM-powered architecture tool with diagram-to-code generation, Git versioning, visual diffs, and real-time collaboration." },
+      { name: "Krum", description: "Coordinated coding agents with GitHub, CI/CD, and cloud infrastructure. Handled task delegation, recovery from failures, and shared context." },
+      { name: "Collaborative system design", description: "A tool for designing systems together with LLMs. It could turn diagrams into code, track changes with Git, and show what changed visually." },
     ],
-    footnote: "The startup ended. The urge to build didn’t.",
+    footnote: "Orydle didn’t work out, but I learned a lot building it.",
   },
   {
-    id: "osvi", name: "OSVI", subtitle: "the current rabbit hole", status: "in progress", description: "Founder’s office. Building across the product, from new agent capabilities to the systems that keep them running.",
-    items: osviProjects, footnote: "And I’m not done yet.", href: "https://osvi.ai",
+    id: "osvi", name: "OSVI", subtitle: "what I’m building now", status: "in progress", description: "I work in the Founder’s office. Here’s some of what I’ve built and worked on so far.",
+    items: osviProjects, footnote: "Not done yet.", href: "https://osvi.ai",
   },
 ];
 
@@ -79,6 +79,6 @@ export const writing = [
       publishedAt: "Mar 21, 2026",
       readTime: "10 min read",
       summary:
-        "A security and governance take on NVIDIA OpenShell, OpenClaw, and why autonomous agent fleets need enforcement outside the agent process.",
+        "My take on NVIDIA OpenShell, OpenClaw, and why the rules for what an agent can do need to live outside the agent itself.",
     },
   ] as const;

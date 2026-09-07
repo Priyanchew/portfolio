@@ -3,7 +3,7 @@ export function AfterHours() {
     <div className="section-heading"><h2 id="elsewhere-heading">Off the clock</h2><span>usually with good company</span></div>
     <div className="after-hours-copy">
       <p>I like a good party. I like hosting one even more.</p>
-      <p>Usually up for a concert, a game, a trip to the mountains, or a beer with friends.</p>
+      <p>Usually up for a concert, a game, or a beer with friends.</p>
     </div>
     <div className="music-strip" aria-label="On repeat: Fred again. Lyrics optional.">
       <div className="music-strip-hole" aria-hidden="true" />
@@ -13,7 +13,7 @@ export function AfterHours() {
     </div>
     <p className="music-caption">I remember the drop. The lyrics, not so much.</p>
     <div className="personal-notes">
-      <p>I can talk One Piece, F1, or Minecraft for a while. I’m just as happy on a badminton court or a go-kart track. I grew up by the sea in Daman, and love getting away to the mountains.</p>
+      <p>I can talk One Piece, F1, or Minecraft for a while. I play badminton and like go-karting too. I grew up in Daman, by the sea. These days, my favourite trips are to the mountains.</p>
     </div>
   </section>;
 }

@@ -9,7 +9,7 @@ import { withBasePath } from "@/lib/site-path";
 const AUTH_KEY = "osvi_auth";
 const AUTH_VALUE = "authenticated_v1";
 
-// Public docs — visible to everyone. Add new entries here as you write more.
+// Public docs are visible to everyone. Add new entries here as you write more.
 const PUBLIC_DOCS: Array<{
   title: string;
   href: string;

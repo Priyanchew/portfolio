@@ -22,15 +22,15 @@ export function PortfolioHome() {
         </div>
         <h1 id="intro-heading">Hey, I’m {site.firstName}<span className="name-dot">.</span></h1>
         <p className="intro-lead">{site.tagline}<br className="desktop-break" /> Currently in the Founder’s office at <a href="https://osvi.ai" className="inline-company"><Image src={withBasePath("/logos/osvi-logo.jpg")} width={18} height={18} alt="" /> OSVI <ArrowUpRight size={14} aria-hidden /></a>.</p>
-        <p className="intro-context">I’ve been coding since I was 12. A love of computers grew into a fascination with LLMs, AI agents, and the systems around them. That curiosity has taken me through an early startup product, a startup of my own, and open source.</p>
-        <p className="intro-context">These days, I care about taking an idea all the way to something useful—from the system underneath to the details you interact with.</p>
+        <p className="intro-context">I’ve been coding since I was 12, mostly because I just loved computers. These days, I’m fascinated by LLMs and AI agents, especially everything it takes to make them work well. I’ve built products at startups, started one in college, and contributed to open source.</p>
+        <p className="intro-context">I like working on the whole product, from the backend to the bits you click. Getting the small details right matters to me.</p>
         <div className="intro-links">
           {site.links.map(link => <a key={link.label} href={link.href} target={link.href.startsWith("https:") ? "_blank" : undefined} rel={link.href.startsWith("https:") ? "noreferrer" : undefined}>{link.label} <ArrowUpRight size={13} aria-hidden /></a>)}
         </div>
       </section>
 
       <section className="work-section" id="work" aria-labelledby="work-heading">
-        <div className="section-heading"><h2 id="work-heading">Work, so far</h2><span>the things I’ve put my energy into</span></div>
+        <div className="section-heading"><h2 id="work-heading">Work, so far</h2><span>where I’ve been building</span></div>
         <div className="work-list">
           {work.map(item => {
             const expanded = openWork === item.id;
@@ -49,11 +49,11 @@ export function PortfolioHome() {
             </article>;
           })}
         </div>
-        <details className="story-note"><summary>The slightly longer story <Plus size={13} aria-hidden /></summary><div>
-          <p>I started coding at 12 because I loved computers. Years later, a friend and I emailed Sam Altman asking for GPT-3 access. That curiosity pulled me into LLMs, and eventually AI agents.</p>
-          <p>Building Carbon Crunch’s early core product got me interested in entrepreneurship. Watching the founders lead and care deeply about a specific problem stayed with me. I started Orydle while I was in college, then moved to Bengaluru. The startup didn’t work out, and my view of startups changed.</p>
-          <p>That led me to open source with Agent Orchestrator, where I became a core contributor, and then to OSVI. Most of my work has happened inside those products. That’s where I’ve put my energy.</p>
-          <p className="education-note">Computer & Communication Engineering<br />Manipal University Jaipur · 2022–2026</p>
+        <details className="story-note"><summary>How I got here <Plus size={13} aria-hidden /></summary><div>
+          <p>I started coding at 12 because I loved computers. Years later, a friend and I emailed Sam Altman asking for GPT-3 access. I’ve been interested in LLMs ever since.</p>
+          <p>Carbon Crunch got me thinking about starting a company. I built their early core product and watched how much the founders cared about the problem they were solving. I wanted to try that myself.</p>
+          <p>I started Orydle in college. It didn’t work out, and moving to Bengaluru changed how I thought about startups. After that, I became a core contributor to Agent Orchestrator and joined OSVI. I still contribute to AO, even when it isn’t through code.</p>
+          <p className="education-note">Computer & Communication Engineering<br />Manipal University Jaipur · 2022 to 2026</p>
         </div></details>
       </section>
 
@@ -65,8 +65,8 @@ export function PortfolioHome() {
         {writing.slice(0, 1).map(post => <a key={post.href} className="writing-row" href={post.href} target="_blank" rel="noreferrer"><span>{post.homeTitle}</span><ArrowUpRight size={15} aria-hidden /></a>)}
       </section>
 
-      <section className="contact-section" id="contact" aria-labelledby="contact-heading"><div><h2 id="contact-heading">Let’s build something worth caring about.</h2><p>Interesting problems, good teams, or just a hello.</p><a className="contact-link" href={`mailto:${site.email}`}>Get in touch <ArrowUpRight size={15} aria-hidden /></a></div><WaveMark /></section>
-      <footer className="site-footer"><span>{site.name} <span className="footer-separator">/</span> still building.</span><div><a href="#top" aria-label="Back to top"><ArrowUp size={14} aria-hidden /></a></div></footer>
+      <section className="contact-section" id="contact" aria-labelledby="contact-heading"><div><h2 id="contact-heading">Say hello.</h2><p>If you’d like to work together, or just chat, I’d love to hear from you.</p><a className="contact-link" href={`mailto:${site.email}`}>Email me <ArrowUpRight size={15} aria-hidden /></a></div><WaveMark /></section>
+      <footer className="site-footer"><span>{site.name} <span className="footer-separator">/</span> {site.handle}.dev</span><div><a href="#top" aria-label="Back to top"><ArrowUp size={14} aria-hidden /></a></div></footer>
     </main>
   );
 }
