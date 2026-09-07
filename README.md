@@ -71,8 +71,8 @@ Design references and editorial decisions are recorded in [`docs/portfolio-direc
 - `/` — portfolio, expandable work entries, project folders, personal section, and contact.
 - `/blogs/` — published writing.
 - `/docs/` — document index.
-- `/docs/osvi/` — existing OSVI document access page.
-- `/robots.txt` and `/sitemap.xml` — search metadata. OSVI documents are excluded from the sitemap and marked against indexing.
+- `/docs/osvi/` — existing Osvi document access page.
+- `/robots.txt` and `/sitemap.xml` — search metadata. Osvi documents are excluded from the sitemap and marked against indexing.
 
 ## Static export and documents
 

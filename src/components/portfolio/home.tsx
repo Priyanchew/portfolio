@@ -51,7 +51,7 @@ export function PortfolioHome() {
           <div className="location-note">{site.location}<LocalTime /></div>
         </motion.div>
         <motion.h1 id="intro-heading" {...introMotion(.03)}>Hey, I’m {site.firstName}<span className="name-dot">.</span></motion.h1>
-        <motion.p className="intro-lead" {...introMotion(.06)}>{site.tagline}<br className="desktop-break" /> Currently in the Founder’s office at <a href="https://osvi.ai" className="inline-company"><Image src={withBasePath("/logos/osvi-logo.jpg")} width={18} height={18} alt="" /> OSVI <ArrowUpRight size={14} aria-hidden /></a>.</motion.p>
+        <motion.p className="intro-lead" {...introMotion(.06)}>{site.tagline}<br className="desktop-break" /> Currently in the Founder’s office at <a href="https://osvi.ai" className="inline-company"><Image src={withBasePath("/logos/osvi-logo.jpg")} width={18} height={18} alt="" /> Osvi AI <ArrowUpRight size={14} aria-hidden /></a>.</motion.p>
         <motion.p className="intro-context" {...introMotion(.09)}>I’ve been coding since I was 12, mostly because I just loved computers. These days, I’m fascinated by LLMs and AI agents, especially everything it takes to make them work well. I’ve built products at startups, started one in college, and contributed to open source.</motion.p>
         <motion.p className="intro-context" {...introMotion(.12)}>I like working on the whole product, from the backend to the bits you click. Getting the small details right matters to me.</motion.p>
         <motion.div className="intro-links" {...introMotion(.15)}>
@@ -90,7 +90,7 @@ export function PortfolioHome() {
               <div className="story-note-content">
                 <p>I started coding at 12 because I loved computers. Years later, a friend and I emailed Sam Altman asking for GPT-3 access. We got it, and I’ve been hooked on LLMs ever since.</p>
                 <p>Carbon Crunch got me thinking about starting a company. I built their early core product and watched how much the founders cared about the problem they were solving. I wanted to try that myself.</p>
-                <p>I started Orydle in college. It didn’t work out, and moving to Bengaluru changed how I thought about startups. After that, I became a core contributor to Agent Orchestrator and joined OSVI. I still contribute to AO, even when it isn’t through code.</p>
+                <p>I started Orydle in college. It didn’t work out, and moving to Bengaluru changed how I thought about startups. After that, I became a core contributor to Agent Orchestrator and joined Osvi. I still contribute to AO, even when it isn’t through code.</p>
                 <p className="education-note">Computer & Communication Engineering<br />Manipal University Jaipur · 2022 - 2026</p>
               </div>
             </motion.div>}

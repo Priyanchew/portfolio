@@ -20,7 +20,7 @@ export const profileSchema = {
     image: `${site.url}${withBasePath(site.avatar)}`,
     description: site.tagline,
     jobTitle: "Founder’s office",
-    worksFor: { "@type": "Organization", name: "OSVI", url: "https://osvi.ai/" },
+    worksFor: { "@type": "Organization", name: "Osvi AI", url: "https://osvi.ai/" },
     homeLocation: { "@type": "Place", name: site.location },
     knowsAbout: ["AI agents", "Large language models", "Product engineering", "Developer tools"],
     sameAs: site.links.filter(link => link.href.startsWith("https:")).map(link => link.href),
