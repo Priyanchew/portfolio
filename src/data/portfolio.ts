@@ -23,7 +23,7 @@ export const work = [
   {
     id: "osvi", name: "Osvi AI", role: "Founder’s office", period: "May 2026 - Present", logo: "/logos/osvi-logo.jpg",
     line: "Founder’s office. Chat agents, builder, evals.",
-    paragraphs: ["In the Founder’s office at Osvi, I’ve been building Chat Agents, Conductor (our AI Agent Builder), and Agent Evals and simulations.", "For Chat Agents, I’ve shipped new capabilities, helped it handle a lot more usage, and made it faster. I’ve also worked on tool libraries, MCP integrations, account and user lifecycle handling, and reliability across the product.", "There’s still plenty to do."],
+    paragraphs: ["In the Founder’s office at Osvi, I’ve been building Chat Agents, Conductor (our AI Agent Builder), and Agent Evals and simulations.", "For Chat Agents, I’ve shipped new capabilities, helped it handle a lot more usage, and made it faster. I’ve also worked on tool libraries, MCP integrations, account and user lifecycle handling, and reliability across the product.", "I’m still adding to that list."],
     tags: "Chat Agents / Conductor / Evals / MCP", url: "https://osvi.ai", link: "Explore Osvi",
   },
   {
@@ -66,7 +66,7 @@ export const projectFolders = [
   },
   {
     id: "osvi", name: "Osvi", subtitle: "what I’m building now", status: "in progress", description: "I work in the Founder’s office. Here’s some of what I’ve built and worked on so far.",
-    items: osviProjects, footnote: "Not done yet.", href: "https://osvi.ai",
+    items: osviProjects, footnote: "A few things I’ve shipped so far. More to come.", href: "https://osvi.ai",
   },
 ];
 
