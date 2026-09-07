@@ -2,16 +2,22 @@ import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
 import { site, writing } from "@/data/portfolio";
 import { withBasePath } from "@/lib/site-path";
+import { socialMetadata } from "@/lib/site-metadata";
+import { serializeSchema, writingSchema } from "@/lib/structured-data";
+
+const description = "Writing by Priyanshu Choudhary on AI agents, OpenShell, and the security around them.";
 
 export const metadata: Metadata = {
   title: "Writing",
-  description: "One article so far, on security for AI agents.",
+  description,
   alternates: { canonical: `${site.url}${withBasePath("/blogs/")}` },
+  ...socialMetadata(`Writing | ${site.name}`, description, "/blogs/"),
 };
 
 export default function BlogsPage() {
   return (
     <main className="writing-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(writingSchema) }} />
       <h1>Once, I wrote</h1>
       <p className="page-intro">One article so far, on security for AI agents.</p>
       <div className="writing-archive">

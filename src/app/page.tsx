@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { site } from "@/data/portfolio";
 import { withBasePath } from "@/lib/site-path";
 import { siteMetadata } from "@/lib/site-metadata";
+import { profileSchema, serializeSchema } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   alternates: { canonical: `${site.url}${withBasePath("/")}` },
@@ -11,5 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <PortfolioHome />;
+  return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(profileSchema) }} /><PortfolioHome /></>;
 }

@@ -26,6 +26,7 @@ Open [localhost:3022](http://localhost:3022). `corepack enable` is only needed i
 | --- | --- |
 | `pnpm dev` | Develop with live updates on port 3022. |
 | `pnpm check` | Run ESLint and TypeScript checks. |
+| `pnpm icons:generate` | Export the three favicon options, default browser/mobile icons, and comparison image. |
 | `pnpm lint:fix` | Apply ESLint’s automatic fixes. |
 | `pnpm build:check` | Build and verify the static export using an ephemeral document key. |
 | `NEXT_PUBLIC_BASE_PATH=/new pnpm build:check` | Verify the deployment under `/new/`, including prefixed assets, links, and metadata. |
@@ -49,12 +50,16 @@ The static preview uses [serve](https://github.com/vercel/serve). Next.js’s se
 | [`src/data/portfolio.ts`](src/data/portfolio.ts) | Identity, social/contact links, work dates and descriptions, project folders, and writing links. Shared by the homepage, writing page, and metadata. |
 | [`src/components/portfolio/home.tsx`](src/components/portfolio/home.tsx) | Introduction, longer story, section order, and contact copy. |
 | [`src/components/portfolio/after-hours.tsx`](src/components/portfolio/after-hours.tsx) | Personal interests and the Fred again.. wristband. |
+| [`src/components/portfolio/local-time.tsx`](src/components/portfolio/local-time.tsx) | Live local time, always formatted for `Asia/Kolkata` and labelled IST. |
 | [`src/components/portfolio/projects.tsx`](src/components/portfolio/projects.tsx) | Project-folder interaction and side-project note. |
 | [`src/components/portfolio/shell.tsx`](src/components/portfolio/shell.tsx) | Shared header, navigation, and theme toggle. |
 | [`src/app/portfolio.css`](src/app/portfolio.css) | Colors, typography, responsive layouts, and component styles. |
 | [`src/app/globals.css`](src/app/globals.css) | Tailwind theme mappings and shared base rules. |
 | [`src/app/opengraph-image.tsx`](src/app/opengraph-image.tsx) | Generated social preview. |
 | [`src/app/icon.svg`](src/app/icon.svg) | Site icon. |
+| [`public/favicons/`](public/favicons/) | Monogram, coast, and pixel options. Edit the SVG sources, then run `pnpm icons:generate`. |
+| [`src/lib/site-metadata.ts`](src/lib/site-metadata.ts) | Search descriptions, social cards, authorship, and icon metadata. |
+| [`src/lib/structured-data.ts`](src/lib/structured-data.ts) | Profile/Person and writing collection JSON-LD, based on the visible content. |
 | [`public/`](public/) | Portrait, font, company logos, custom domain, and document sources. |
 
 The work dates and descriptions are maintained in one place. The old resume template, sample employers, unused UI components, and unused MDX pipeline have been removed. Writing currently links to published articles; add entries to `writing` in the shared data file. There are no local MDX article routes.
@@ -89,6 +94,16 @@ The `new` build sets `NEXT_PUBLIC_BASE_PATH=/new`. Next.js handles route links; 
 After a successful **push** check on `new`, the deployment workflow runs from `master`, builds both versions, and publishes them together. This keeps the Pages environment’s existing master-only deployment policy. A root update also rebuilds both versions. To deploy manually, dispatch the deployment workflow on `master`.
 
 The workflow file is kept in sync on both branches. Deployments do not merge the redesigned application into `master`; its existing root application is built separately.
+
+## Icons and search metadata
+
+The default favicon is the olive `p.` monogram. [Compare all three options](docs/favicon-options.png). `pnpm icons:generate` exports SVG, PNG sizes from 16 to 512 pixels, a multi-size ICO, and an Apple touch icon. The master branch uses the same ICO because Google Search chooses one favicon per hostname.
+
+Canonical and social URLs use `https://www.priyanchew.dev`, matching the domain redirect. Each public page has its own social title, description, and URL. The card is served at `/new/social-card.png` so GitHub Pages supplies `image/png`; the old `/new/opengraph-image` route remains available for existing links.
+
+The manifest keeps icons and home-screen bookmarks under the deployment base path. The IST clock renders a neutral placeholder in the static export and updates in the browser, so the build time never appears as the current time.
+
+The domain-level `public/robots.txt` and `public/sitemap.xml` live on **master**. The sitemap lists the root and `/new/` portfolios and their writing pages. The redesign also exports its own sitemap. Private document paths are excluded from the sitemap and blocked by the root crawler rules; the private index retains `noindex, nofollow`. Robots rules are crawler guidance, not access control.
 
 ## GitHub Actions
 

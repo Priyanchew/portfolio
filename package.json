@@ -13,7 +13,8 @@
     "lint": "eslint src scripts *.mjs --max-warnings=0",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "next typegen && tsc --noEmit",
-    "check": "pnpm lint && pnpm typecheck"
+    "check": "pnpm lint && pnpm typecheck",
+    "icons:generate": "node scripts/generate-favicons.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",

@@ -13,7 +13,7 @@ export function AfterHours() {
     </div>
     <p className="music-caption">I remember the drop. The lyrics, not so much.</p>
     <div className="personal-notes">
-      <p>I can talk One Piece, F1, or Minecraft for a while. I play badminton and like go-karting too. I grew up in Daman, by the sea. These days, my favourite trips are to the mountains.</p>
+      <p>I can talk One Piece, F1, or Minecraft for hours. I grew up in Daman, by the sea. I usually lean towards the mountains, but a beach trip works just as well with the right company. Japan is the trip I really want to make next.</p>
     </div>
   </section>;
 }

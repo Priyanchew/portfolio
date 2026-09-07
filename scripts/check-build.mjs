@@ -19,7 +19,7 @@ for (const script of ["node_modules/next/dist/bin/next", "scripts/protect-osvi-d
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
-for (const file of ["index.html", "blogs/index.html", "docs/index.html", "docs/osvi/index.html", "404.html", "robots.txt", "sitemap.xml", "icon.svg", "opengraph-image", "CNAME", ".nojekyll"]) {
+for (const file of ["index.html", "blogs/index.html", "docs/index.html", "docs/osvi/index.html", "404.html", "robots.txt", "sitemap.xml", "icon.svg", "favicon.ico", "apple-icon.png", "manifest.webmanifest", "social-card.png", "opengraph-image", "CNAME", ".nojekyll"]) {
   assert.ok(fs.existsSync(path.join(root, "out", file)), `Missing export: ${file}`);
 }
 
@@ -48,12 +48,39 @@ for (const [file, route] of [["index.html", "/"], ["blogs/index.html", "/blogs/"
   const canonical = html.match(/<link rel="canonical" href="([^"]+)"/);
   assert.ok(canonical, `Missing canonical URL in ${file}`);
   assert.equal(new URL(canonical[1]).pathname, `${basePath}${route}`);
+  assert.equal(new URL(canonical[1]).origin, "https://www.priyanchew.dev");
+  for (const icon of ["/favicon.ico", "/icon.svg", "/apple-icon.png", "/favicons/favicon-96.png"]) {
+    assert.ok(html.includes(`href="${basePath}${icon}"`), `Missing icon link in ${file}: ${icon}`);
+  }
+  const graphUrl = html.match(/<meta property="og:url" content="([^"]+)"/);
+  assert.equal(graphUrl?.[1], canonical[1], `Social URL differs from canonical in ${file}`);
   for (const name of ["og:image", "twitter:image"]) {
     const image = html.match(new RegExp(`<meta (?:property|name)="${name}" content="([^"]+)"`));
     assert.ok(image, `Missing ${name} in ${file}`);
-    assert.equal(new URL(image[1]).pathname, `${basePath}/opengraph-image`);
+    assert.equal(new URL(image[1]).pathname, `${basePath}/social-card.png`);
+  }
+  const schemaText = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1];
+  assert.ok(schemaText, `Missing structured data in ${file}`);
+  const schema = JSON.parse(schemaText);
+  assert.equal(schema.url, canonical[1]);
+  assert.equal(schema["@type"], route === "/" ? "ProfilePage" : "CollectionPage");
+  if (route === "/") {
+    assert.equal(schema.mainEntity["@type"], "Person");
+    assert.equal(schema.mainEntity.name, "Priyanshu Choudhary");
+    assert.equal(schema.mainEntity.sameAs.length, 3);
   }
 }
+
+const manifest = JSON.parse(fs.readFileSync(path.join(exportDir, "manifest.webmanifest"), "utf8"));
+assert.equal(manifest.start_url, `${basePath}/`);
+assert.equal(manifest.scope, `${basePath}/`);
+for (const icon of manifest.icons) verifyLocalReference(icon.src, "manifest.webmanifest");
+for (const name of ["social-card.png", "apple-icon.png", "favicons/favicon-96.png"]) {
+  const buffer = fs.readFileSync(path.join(exportDir, name));
+  assert.equal(buffer.subarray(1, 4).toString(), "PNG", `Invalid PNG: ${name}`);
+}
+const privatePage = fs.readFileSync(path.join(exportDir, "docs/osvi/index.html"), "utf8");
+assert.match(privatePage, /<meta name="robots" content="noindex, nofollow"/);
 
 // Verify the exported documents contain encrypted payloads that round-trip to the source.
 const sourceDir = path.join(root, "public/docs/osvi");
