@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /docs/osvi/
-Disallow: /new/docs/osvi/
-
-Sitemap: https://www.priyanchew.dev/sitemap.xml

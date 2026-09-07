@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import { withBasePath } from "@/lib/site-path";
 
-/** Populated at build time from public/docs/osvi/*.html — do not import from client components. */
+/** Populated at build time from public/docs/osvi/*.html. Do not import from client components. */
 export type OsviDocEntry = {
   href: string;
   title: string;
@@ -71,7 +72,7 @@ export function getOsviDocs(): OsviDocEntry[] {
       : "";
 
     entries.push({
-      href: `/docs/osvi/${file}`,
+      href: withBasePath(`/docs/osvi/${file}`),
       title,
       description,
     });

@@ -5,6 +5,7 @@ import type { OsviDocEntry } from "./get-osvi-docs";
 import { ChevronLeft, ChevronRight, FileText, Lock, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { withBasePath } from "@/lib/site-path";
 
 // SHA-256 of the access key. The plaintext key is NOT shipped in the bundle.
 // To rotate: pick a new key, run
@@ -46,7 +47,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
         return;
       }
     } catch {
-      /* localStorage blocked — show the form anyway */
+      /* localStorage is blocked; show the form anyway. */
     }
     setAuthState("locked");
   }, []);
@@ -56,7 +57,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
     if (authState !== "unlocked") return;
     const params = new URLSearchParams(window.location.search);
     const from = params.get("from");
-    if (from && from.startsWith("/docs/osvi/")) {
+    if (from && from.startsWith(withBasePath("/docs/osvi/"))) {
       window.location.replace(from);
     }
   }, [authState]);
@@ -168,7 +169,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
           </button>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          Internal docs and write-ups for the OSVI internship.
+          Internal docs and write-ups from my work at OSVI.
         </p>
       </BlurFade>
 
@@ -196,7 +197,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
                   </span>
                 ) : null}
               </div>
-              <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
+              <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-[opacity,transform] duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
             </a>
           ))}
         </div>

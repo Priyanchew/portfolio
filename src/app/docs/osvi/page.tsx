@@ -3,7 +3,7 @@ import { getOsviDocs } from "./get-osvi-docs";
 import OsviClient from "./osvi-client";
 
 export const metadata: Metadata = {
-  title: "OSVI — Private",
+  title: "OSVI private docs",
   description: "Private docs.",
   robots: { index: false, follow: false },
 };

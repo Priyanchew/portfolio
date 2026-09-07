@@ -4,11 +4,12 @@ import BlurFade from "@/components/magicui/blur-fade";
 import { ChevronRight, FileText, Lock } from "lucide-react";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
+import { withBasePath } from "@/lib/site-path";
 
 const AUTH_KEY = "osvi_auth";
 const AUTH_VALUE = "authenticated_v1";
 
-// Public docs — visible to everyone. Add new entries here as you write more.
+// Public docs are visible to everyone. Add new entries here as you write more.
 const PUBLIC_DOCS: Array<{
   title: string;
   href: string;
@@ -60,7 +61,7 @@ export default function DocsClient() {
             {PUBLIC_DOCS.map((doc) => (
               <a
                 key={doc.href}
-                href={doc.href}
+                href={withBasePath(doc.href)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-start gap-3 border border-border rounded-xl p-4 hover:bg-accent/40 transition-colors"
@@ -74,7 +75,7 @@ export default function DocsClient() {
                     {doc.description}
                   </span>
                 </div>
-                <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
+                <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-[opacity,transform] duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
               </a>
             ))}
 
@@ -89,10 +90,10 @@ export default function DocsClient() {
                     OSVI
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    Internal docs and write-ups for the OSVI internship.
+                    Internal docs and write-ups from my work at OSVI.
                   </span>
                 </div>
-                <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
+                <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-[opacity,transform] duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
               </Link>
             )}
           </div>
