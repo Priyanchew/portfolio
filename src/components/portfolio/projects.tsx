@@ -17,7 +17,7 @@ export function ProjectFolders({ revealStart = 0 }: { revealStart?: number }) {
 
   return <section className="projects-section" id="projects" aria-labelledby="projects-heading">
     <motion.div className="section-heading" {...reveal(revealStart)}><h2 id="projects-heading">The side projects</h2><span>the ones waiting their turn</span></motion.div>
-    <motion.p className="projects-intro" {...reveal(revealStart + .03)}>I went all-in on Orydle, then OSVI.<br /><span>My side projects are still waiting for their turn.</span></motion.p>
+    <motion.p className="projects-intro" {...reveal(revealStart + .03)}>I went all-in on Orydle, then Osvi.<br /><span>My side projects are still waiting for their turn.</span></motion.p>
     <div className="project-folders">
       {projectFolders.map((folder, index) => <motion.button type="button" key={folder.id} className={`project-folder folder-${folder.id} ${selected === folder.id ? "folder-open" : ""}`} aria-expanded={selected === folder.id} aria-controls={`project-panel-${folder.id}`} onClick={() => setSelected(selected === folder.id ? null : folder.id)} {...reveal(revealStart + .06 + index * .03)}>
         <span className="folder-back" aria-hidden="true" />
@@ -35,7 +35,7 @@ export function ProjectFolders({ revealStart = 0 }: { revealStart?: number }) {
           <ol className="project-index">
             {current.items.map((project, i) => <li key={project.name}><span className="project-number">{String(i + 1).padStart(2, "0")}</span><div><h4>{project.name}</h4><p>{project.description}</p></div></li>)}
           </ol>
-          <div className="project-panel-footer"><p>{current.footnote}</p>{current.href && <a href={current.href} target="_blank" rel="noreferrer">Explore OSVI <ArrowUpRight size={13} aria-hidden /></a>}</div>
+          <div className="project-panel-footer"><p>{current.footnote}</p>{current.href && <a href={current.href} target="_blank" rel="noreferrer">Explore Osvi <ArrowUpRight size={13} aria-hidden /></a>}</div>
         </div>
       </motion.div>}
     </AnimatePresence>

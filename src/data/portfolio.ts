@@ -5,7 +5,7 @@ export const site = {
   handle: "priyanchew",
   url: "https://www.priyanchew.dev",
   title: "Priyanshu Choudhary | AI Agents & Product Engineering",
-  description: "I’m Priyanshu (priyanchew), a software engineer in Bengaluru. I build AI agents at OSVI, contribute to Agent Orchestrator, and previously started Orydle AI.",
+  description: "I’m Priyanshu (priyanchew), a software engineer in Bengaluru. I build AI agents at Osvi AI, contribute to Agent Orchestrator, and previously started Orydle AI.",
   tagline: "I build AI agents and the products around them.",
   location: "Bengaluru, India",
   avatar: "/priyanshu.jpg",
@@ -21,10 +21,10 @@ export const site = {
 
 export const work = [
   {
-    id: "osvi", name: "OSVI", role: "Founder’s office", period: "May 2026 - Present", logo: "/logos/osvi-logo.jpg",
+    id: "osvi", name: "Osvi AI", role: "Founder’s office", period: "May 2026 - Present", logo: "/logos/osvi-logo.jpg",
     line: "Founder’s office. Chat agents, builder, evals.",
-    paragraphs: ["In the Founder’s office at OSVI, I’ve been building Chat Agents, Conductor (our AI Agent Builder), and Agent Evals and simulations.", "For Chat Agents, I’ve shipped new capabilities, helped it handle a lot more usage, and made it faster. I’ve also worked on tool libraries, MCP integrations, account and user lifecycle handling, and reliability across the product.", "There’s still plenty to do."],
-    tags: "Chat Agents / Conductor / Evals / MCP", url: "https://osvi.ai", link: "Explore OSVI",
+    paragraphs: ["In the Founder’s office at Osvi, I’ve been building Chat Agents, Conductor (our AI Agent Builder), and Agent Evals and simulations.", "For Chat Agents, I’ve shipped new capabilities, helped it handle a lot more usage, and made it faster. I’ve also worked on tool libraries, MCP integrations, account and user lifecycle handling, and reliability across the product.", "There’s still plenty to do."],
+    tags: "Chat Agents / Conductor / Evals / MCP", url: "https://osvi.ai", link: "Explore Osvi",
   },
   {
     id: "ao", name: "Agent Orchestrator", role: "Core contributor · Open source", period: "Mar 2026 - Present", logo: "/logos/agent-orchestrator.svg",
@@ -35,7 +35,7 @@ export const work = [
   {
     id: "orydle", name: "Orydle AI", role: "Founder & engineer", period: "Aug 2025 - Apr 2026", logo: "/logos/orydle-brandmark.png",
     line: "My first startup. Built while I was in college.",
-    paragraphs: ["I started Orydle in college when LLMs made the ideas I had feel doable. I built Krum to coordinate coding agents with GitHub, CI/CD, and cloud infrastructure. A lot of the work was figuring out how to split up tasks, recover from failures, and keep agents working with the same context.", "The startup didn’t work out. Moving from college to Bengaluru changed how I thought about startups. After Orydle, I got involved in open source and joined OSVI."],
+    paragraphs: ["I started Orydle in college when LLMs made the ideas I had feel doable. I built Krum to coordinate coding agents with GitHub, CI/CD, and cloud infrastructure. A lot of the work was figuring out how to split up tasks, recover from failures, and keep agents working with the same context.", "The startup didn’t work out. Moving from college to Bengaluru changed how I thought about startups. After Orydle, I got involved in open source and joined Osvi."],
     tags: "AI agents / Developer tools / Product development",
   },
   {
@@ -65,7 +65,7 @@ export const projectFolders = [
     footnote: "Orydle didn’t work out, but I learned a lot building it.",
   },
   {
-    id: "osvi", name: "OSVI", subtitle: "what I’m building now", status: "in progress", description: "I work in the Founder’s office. Here’s some of what I’ve built and worked on so far.",
+    id: "osvi", name: "Osvi", subtitle: "what I’m building now", status: "in progress", description: "I work in the Founder’s office. Here’s some of what I’ve built and worked on so far.",
     items: osviProjects, footnote: "Not done yet.", href: "https://osvi.ai",
   },
 ];

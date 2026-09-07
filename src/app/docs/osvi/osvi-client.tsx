@@ -154,7 +154,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
         </Link>
         <div className="flex items-start justify-between mb-2 gap-4">
           <h1 className="text-2xl font-semibold tracking-tight">
-            OSVI{" "}
+            Osvi AI{" "}
             <span className="ml-1 bg-card border border-border rounded-md px-2 py-1 text-muted-foreground text-sm">
               {docs.length} {docs.length === 1 ? "doc" : "docs"}
             </span>
@@ -169,7 +169,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
           </button>
         </div>
         <p className="text-sm text-muted-foreground mb-8">
-          Internal docs and write-ups from my work at OSVI.
+          Internal docs and write-ups from my work at Osvi.
         </p>
       </BlurFade>
 
@@ -177,7 +177,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
         <div className="flex flex-col gap-2">
           {docs.length === 0 && (
             <p className="text-sm text-muted-foreground border border-dashed border-border rounded-xl p-6 text-center">
-              No OSVI docs are available yet.
+              No Osvi docs are available yet.
             </p>
           )}
           {docs.map((doc) => (

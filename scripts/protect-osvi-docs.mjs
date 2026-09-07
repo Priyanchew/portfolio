@@ -67,7 +67,7 @@ function protectedPage({ title, payload }) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Private OSVI Document</title>
+<title>Private Osvi AI Document</title>
 <style>
   :root { color-scheme: dark light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0a0a0a; color: #fafafa; }
@@ -84,7 +84,7 @@ function protectedPage({ title, payload }) {
 </head>
 <body>
 <main id="gate">
-  <h1>Private OSVI Document</h1>
+  <h1>Private Osvi AI Document</h1>
   <p>${safeTitle}</p>
   <form id="form">
     <input id="key" type="password" placeholder="Access key" autocomplete="off" autofocus>
@@ -170,4 +170,4 @@ for (const file of files) {
   fs.writeFileSync(path.join(outDir, file), protectedPage({ title, payload }));
 }
 
-console.log(`Protected ${files.length} OSVI doc${files.length === 1 ? "" : "s"}.`);
+console.log(`Protected ${files.length} Osvi doc${files.length === 1 ? "" : "s"}.`);
