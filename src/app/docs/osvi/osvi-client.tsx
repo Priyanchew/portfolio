@@ -197,7 +197,7 @@ export default function OsviClient({ docs }: OsviClientProps) {
                   </span>
                 ) : null}
               </div>
-              <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
+              <ChevronRight className="size-4 mt-0.5 text-muted-foreground opacity-0 -translate-x-1 transition-[opacity,transform] duration-200 group-hover:opacity-100 group-hover:translate-x-0 shrink-0" />
             </a>
           ))}
         </div>

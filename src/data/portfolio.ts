@@ -23,13 +23,13 @@ export const work = [
   {
     id: "osvi", name: "OSVI", role: "Founder’s office", period: "May 2026 - Present", logo: "/logos/osvi-logo.jpg",
     line: "Founder’s office. Chat agents, builder, evals.",
-    paragraphs: ["In the Founder’s office at OSVI, I’ve been building Chat Agents, Conductor (our AI Agent Builder), and Agent Evals and simulations.", "For Chat Agents, I’ve added features, helped it handle a lot more usage, and worked on making it faster. I’ve also worked on tool libraries, MCP integrations, account and user lifecycle handling, and reliability across the product.", "Not done yet."],
+    paragraphs: ["In the Founder’s office at OSVI, I’ve been building Chat Agents, Conductor (our AI Agent Builder), and Agent Evals and simulations.", "For Chat Agents, I’ve shipped new capabilities, helped it handle a lot more usage, and made it faster. I’ve also worked on tool libraries, MCP integrations, account and user lifecycle handling, and reliability across the product.", "There’s still plenty to do."],
     tags: "Chat Agents / Conductor / Evals / MCP", url: "https://osvi.ai", link: "Explore OSVI",
   },
   {
     id: "ao", name: "Agent Orchestrator", role: "Core contributor · Open source", period: "Mar 2026 - Present", logo: "/logos/agent-orchestrator.svg",
     line: "Core contributor. Parallel coding agents.",
-    paragraphs: ["I became a core contributor to Agent Orchestrator, which lets you run coding agents in parallel.", "I helped get it running on Windows and worked on terminal and session reliability, local integrations, and validation tools. That meant fixing things in the CLI, dashboard, and runtime.", "I still contribute, though these days it’s mostly outside the code."],
+    paragraphs: ["I became a core contributor to Agent Orchestrator, which lets you run coding agents in parallel.", "I helped get it running on Windows and worked on terminal and session reliability, local integrations, and validation tools. That meant fixing things in the CLI, dashboard, and runtime.", "I still contribute, though lately it’s mostly outside the code."],
     tags: "Developer tools / Agent orchestration / Reliability", url: "https://aoagents.dev/", link: "Explore Agent Orchestrator",
   },
   {
