@@ -23,6 +23,6 @@ export function LocalTime() {
   const time = timestamp === null ? null : formatter.format(timestamp).toUpperCase();
 
   return <time className="location-time" dateTime={timestamp === null ? undefined : new Date(timestamp).toISOString()} aria-label={time ? `My local time: ${time}, India Standard Time` : "India Standard Time"}>
-    {time ?? "--:--"} <span>IST</span>
+    it’s {time ?? "--:--"} <span>for me</span>
   </time>;
 }
