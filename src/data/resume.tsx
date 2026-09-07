@@ -16,9 +16,9 @@ export const DATA = {
   location: "Bengaluru, India",
   locationLink: "https://www.google.com/maps/place/Bengaluru",
   description:
-    "Final-year engineering student building AI agents and developer tooling. Founder at Orydle AI, working on Krum — a multi-agent orchestrator and control plane.",
+    "Engineer building AI products, agent systems, and developer tools. Currently in the Founder’s office at OSVI, a core contributor to Agent Orchestrator, and previously founder of Orydle AI.",
   summary:
-    "I'm a self-taught builder focused on AI agents, multi-agent orchestration, and developer tooling. Currently building Krum, a control plane sitting above GitHub, CI/CD, cloud infra, and coding agents, at Orydle AI. On the side, I'm shipping OSS in the agents space and contributing to the [agent-orchestrator](https://github.com/ComposioHQ/agent-orchestrator) repo by ComposioHQ. Final year of B.Tech in Computer & Communication Engineering at Manipal University Jaipur — skipped placements to go all-in on the agents stack.",
+    "I build AI products in the Founder’s office at OSVI. My path started with building Carbon Crunch's early core product, which drew me into entrepreneurship. I went on to start Orydle AI in college, became a core contributor to Agent Orchestrator, and now work on agents and product features at OSVI. I grew up in Daman and am based in Bengaluru.",
   avatarUrl: "/priyanshu.jpg",
   skills: [
     { name: "Python", icon: Python },
@@ -78,12 +78,12 @@ export const DATA = {
       href: "https://osvi.ai",
       badges: [],
       location: "Remote",
-      title: "SDE Intern",
+      title: "Founder’s office",
       logoUrl: "/logos/osvi-logo.jpg",
-      start: "2026",
+      start: "May 2026",
       end: "Present",
       description:
-        "Working on Osvi AI, a voice-agent platform for automating inbound and outbound calls across healthcare, BFSI, and e-commerce. Building on the multi-agent call orchestration stack: multilingual conversation flows, CRM and calendar integrations, intelligent agent transfer, and bulk-calling campaigns at enterprise scale.",
+        "Building across OSVI’s product in the Founder’s office. Shipped Chat Agent features, scaled to heavy usage, and optimized performance. Built Conductor / AI Agent Builder, Agent Evals and simulations, tool libraries and MCP integrations, account and user lifecycle handling, and general reliability and performance improvements. And I’m not done yet.",
     },
     {
       company: "Orydle AI",
@@ -92,25 +92,25 @@ export const DATA = {
       title: "Founder & Engineer",
       logoUrl: "/logos/orydle-brandmark.png",
       start: "Aug 2025",
-      end: "Present",
+      end: "Apr 2026",
       description:
-        "Building Krum, a multi-agent orchestrator and control plane sitting above GitHub, CI/CD, cloud infra, and coding agents. Designed swarm coordination patterns — delegation, recovery, and context sharing across agent clusters. Architecting for concurrent agent tasks, multi-tenant teams, and multiple tool integrations across the agent stack. Built an LLM-powered architecture tool with diagram-to-code generation, Git versioning, diff visualization, and real-time collaborative system design.",
+        "Started Orydle AI in college and built Krum, a multi-agent orchestrator and control plane spanning GitHub, CI/CD, cloud infrastructure, and coding agents. Worked on delegation, recovery, context sharing, and collaborative system design. The startup did not work out; moving to Bengaluru changed how I thought about entrepreneurship.",
     },
     {
       company: "Agent Orchestrator",
-      href: "https://github.com/ComposioHQ/agent-orchestrator",
+      href: "https://aoagents.dev",
       badges: ["Open Source"],
       location: "Remote",
-      title: "Open Source Contributor",
+      title: "Core Contributor",
       logoUrl: "/logos/agent-orchestrator.svg",
-      start: "2026",
+      start: "Mar 2026",
       end: "Present",
       description:
-        "Contributing to ComposioHQ's agent-orchestrator, an open-source orchestration layer for parallel AI coding agents. Work spans Windows platform support, terminal/session reliability, local integration flows, validation harnesses, and issue-driven product fixes across the AO CLI, dashboard, and runtime stack.",
+        "Became a core contributor to Agent Orchestrator, an open-source orchestration layer for parallel AI coding agents. Work spanned Windows platform support, terminal and session reliability, local integration flows, validation harnesses, and product fixes across the CLI, dashboard, and runtime. Still involved today, contributing beyond code.",
     },
     {
       company: "Carbon Crunch",
-      href: "https://www.linkedin.com/company/carbon-crunch",
+      href: "https://www.carboncrunch.in/",
       badges: [],
       location: "Noida, India",
       title: "Software Developer Intern",
@@ -118,7 +118,7 @@ export const DATA = {
       start: "Jul 2024",
       end: "Jan 2025",
       description:
-        "Spearheaded development of an AI-driven BRSR automation pipeline (using NLP and web scraping) that reduced report generation time by 70% and cut costs by 80%. Designed an interactive tool for multi-company BRSR comparison and year-over-year analysis, improving reporting accuracy by 30% and accelerating decision-making.",
+        "Built the early core product at Carbon Crunch, working on AI-driven BRSR reporting automation using NLP and web scraping, along with multi-company comparison and year-over-year analysis. This was the experience that first drew me into entrepreneurship.",
     },
   ],
   education: [

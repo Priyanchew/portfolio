@@ -1,0 +1,49 @@
+# Priyanchew.dev — local portfolio design
+
+## Visitor experience
+
+The first screen answers who Priyanshu is, what he works on, and how to contact him. Compact work entries show the four meaningful chapters with month-level dates; each expands to explain ownership and engineering scope. The longer history is optional. Two interactive folders reveal the projects inside Orydle and OSVI, introduced with “The side projects became the main quest.” A short follow-up explains that side projects are still underway and links to GitHub experiments, including college work. The personal section uses conversational copy and a small Fred again.. wristband detail, followed by a short paragraph. There is no separate personal-lore disclosure.
+
+The latest direction from Priyanshu is a small amount of personal character with an employer-friendly first impression. His Zain screenshot is the strongest reference for simplicity. The page is deliberately edited down from the much larger set of interests and stories he supplied.
+
+## References explored
+
+- Zain: user-provided screenshot; sparse text, direct introduction, generous space, inline links.
+- [Ronish](https://ronish.dev/): inspected the live v5 page and source for all five branches in the adjacent ronish.dev clone. v1 is a compact dark Astro page; v2 uses disclosures and small interactions; v3 is text and MDX with a serif font; v4 is a small personal introduction and work list; v5 uses restrained prose, compact rows, and personal postcards. The clearest fit here is v5’s hierarchy and v3’s personal tone.
+- [Tamish](https://www.tamishm.com/): viewed in the browser and interacted with its button. Personal narrative, a textured scrapbook, imagery and playful details. The useful influence is specificity and character, kept much quieter here.
+- [Paco](https://paco.me/): concise work and writing with personal interests in the same voice.
+- [Rauno](https://rauno.me/): compact identity and attention to interaction details.
+- Current explorations also included [Shirley Xu](https://www.shirleyxu.dev/) and [Pablo Míguez](https://www.pablomiguez.dev/); their larger showcase structures are less suited to this brief.
+
+## Facts and editorial choices
+
+- Current role, public engineering descriptions, contact links, writing, dates, portrait and company marks came from [Priyanshu’s existing portfolio](https://www.priyanchew.dev/) and its public source repository. Priyanshu subsequently specified the current OSVI role as Founder’s office, which supersedes the old public-site title. He supplied six areas of work: Chat Agents (features, scaling, optimization), Conductor / AI Agent Builder, Agent Evals and simulations, tool libraries and MCP integrations, account/user lifecycle, and general reliability/performance. The portfolio uses these directly, without inventing scale metrics, and ends the OSVI detail with “And I’m not done yet.”
+- Priyanshu clarified that Orydle did not work out, the move from college to Bengaluru changed his view of startups, he became an AO core contributor, and now builds at OSVI. He subsequently supplied OSVI’s May 2026 start, AO’s March 2026 start and continued non-technical involvement, and Orydle’s approximate April 2026 end. The month-level timeline displays these alongside the existing August 2025 Orydle start and July 2024–January 2025 Carbon Crunch dates.
+- Priyanshu clarified that he built Carbon Crunch’s early core product and that watching its founders lead and care deeply about a problem drew him into entrepreneurship.
+- [Carbon Crunch’s public site](https://www.carboncrunch.in/) and [company story](https://carboncrunch.in/about-us) describe ESG/BRSR reporting, data collection, validation, and sustainability workflows. This establishes company context, not personal attribution. Individual ownership comes from Priyanshu’s account and existing public portfolio. Current company metrics and newer product modules have not been attributed to him.
+- Coding at 12 and emailing Sam Altman with a friend to ask for GPT-3 access are user-provided. At his request, the introduction now focuses on LLMs, agents, and the systems around them. The email anecdote remains only in the optional longer story, without claiming that access was granted or that Sam replied.
+- Interests are drawn from the conversation. The wristband is a small original graphic expressing his Fred again.. preference; it does not represent a particular concert or function as an audio player. Daman appears only in the personal section, not the introduction or social image. “Once, I wrote” is his requested writing heading.
+- UI/UX Pro Max was set aside at Priyanshu’s explicit request. Design choices follow the references above.
+
+## Implementation
+
+Local clone: `/Users/priyanchew/workspace/priyanchew.dev`, branch `new`.
+
+Run with `pnpm dev --hostname 127.0.0.1 --port 3022`.
+
+Homepage implementation lives in `src/components/portfolio/home.tsx`, with project folders in `projects.tsx`, personal content in `after-hours.tsx`, the small footer graphic in `objects.tsx`, global shell in `shell.tsx`, and styling in `src/app/portfolio.css`. The font and portrait are local, so the homepage does not fetch fonts or media from third parties. Existing blog and document routes remain in place.
+
+The repository’s existing production build requires `OSVI_DOCS_ACCESS_KEY` to encrypt its protected document export. Local build validation uses a random temporary key passed only to the build process. A deployment must use the existing deployment secret; the temporary test key is not a deployment configuration.
+
+## Details worth refining before publishing
+
+- Add exact scale or performance metrics only if Priyanshu supplies figures he wants to publish.
+- Review the first-person wording. It is an editorial draft based on the conversation, not a direct quote.
+
+## Validation
+
+- Frozen-lockfile dependency install; no dependency versions changed.
+- Production build and TypeScript checks passed; all pages exported and the existing protected document was encrypted.
+- Focused ESLint and Git whitespace checks passed.
+- Browser checks covered desktop and a 390px mobile viewport, no horizontal overflow, loaded images, light/dark themes, work disclosures, project folders, keyboard close/focus handling, the longer story, and navigation to the existing writing page. The latest revision also checks month-level dates at narrow widths and the new social/project links.
+- Social preview export verified as a PNG. The new icon and existing blog/document pages are present in the static export.
